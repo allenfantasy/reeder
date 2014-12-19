@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="rssApp">
+  <head>
+    <meta charset="UTF-8">
+    <title>Reeder</title>
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+  </head>
+  <body ng-controller="MainController as main">
+    <header>
+    </header>
+    <div class="main">
+      <div id="sidebar">{{ main.sidebar }}</div>
+      <div id="feeds">
+        <li ng-repeat="feed in main.feeds">
+          {{ feed }}
+        </li>
+      </div>
+      <div id="content">{{ main.content }}</div>
+    </div>
+    Hello Play! Ready for layout.
+    <script src="assets/vendors/jquery-1.9.0.min.js" type="text/javascript"></script>
+    <script src="assets/vendors/angular.min.js" type="text/javascript"></script>
+    <script src="assets/vendors/angular-animate.min.js" type="text/javascript"></script>
+    <script src="assets/vendors/angular-resource.min.js" type="text/javascript"></script>
+    <script src="assets/vendors/angular-route.min.js" type="text/javascript"></script>
+    <script src="assets/src/app.js" type="text/javascript"></script>
+    <script src="assets/src/controllers.js" type="text/javascript"></script>
+  </body>
+</html>

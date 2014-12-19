@@ -1,0 +1,23 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+#GET     /                       controllers.ApplicationController.index()
+GET     /                       controllers.Assets.at(path="/public", file="index.html")
+
+# Feeds
+GET     /feeds                  controllers.FeedsController.index()
+POST    /feeds                  controllers.FeedsController.create()
+GET     /feeds/:id              controllers.FeedsController.show(id: Long)
+POST    /feeds/:id              controllers.FeedsController.update(id: Long)
+DELETE  /feeds/:id              controllers.FeedsController.delete(id: Long)
+GET     /feeds/:id/refresh      controllers.FeedsController.refresh(id: Long)
+
+# Articles
+GET     /articles               controllers.ArticlesController.index()
+POST    /articles/:id/read      controllers.ArticlesController.read(id: Long)
+POST    /articles/:id/unread    controllers.ArticlesController.unread(id: Long)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file           controllers.Assets.at(path="/public", file)
