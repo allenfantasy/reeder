@@ -20,10 +20,13 @@ public class RSSFeedParserFactory {
     	return RSSFeedParserFactory.isAtom(url) ? new AtomFeedParser(url) : new RSSFeedParser(url);
     } catch (IOException e) {
     	e.printStackTrace();
-      // should raise my custom error
+  		// TODO: throw custom exception
     	return new RSSFeedParser(url);
     }
   }
+  /*
+   * Source: http://stackoverflow.com/questions/7591097/determining-whether-a-feed-is-atom-or-rss
+   */
   private static boolean isAtom(String url) {
   	try {
   		DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();

@@ -27,7 +27,7 @@ public class Feed extends Model {
   private String version;
   
   @OneToMany(mappedBy="feed", cascade=CascadeType.ALL)
-  public Set<Article> articles = new HashSet<Article>();
+  public Set<Article> articles = new LinkedHashSet<Article>();
   
   public Feed() {};
   

@@ -14,6 +14,11 @@ public class DOMUtil {
   	return (item == null) ? null : item.getTextContent();
   }
 	
+	public static boolean subElementExists(Element elem, String name) {
+  	Node item = elem.getElementsByTagName(name).item(0);
+  	return (item != null);
+	}
+	
 	public String getCharacterData(XMLEvent event, XMLEventReader eventReader)
       throws XMLStreamException {
   	String result = "";

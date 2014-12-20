@@ -119,6 +119,13 @@ public class Article extends Model {
   	this.guid = guid;
   }
   
+  public String getPubDate() {
+  	return this.pubDate;
+  }
+  public void setPubDate(String pubDate) {
+  	this.pubDate = pubDate;
+  }
+  
   public Boolean isReaded() {
   	return this.isReaded;
   }
