@@ -9,11 +9,17 @@ rssControllers.controller("RssHomeCtrl", ["$scope", function($scope) {
 }]);
 
 rssControllers.controller("MainController", ["$http", function($http) {
+  var self = this;
   $http.get('feeds').success(function(data) {
     console.log(data);
-    //this.feeds = data;
+    self.feeds = data;
   });
-  this.sidebar = "sidebar";
-  this.feeds = 'abcdefg'.split("");
+  this.actions = [
+    { name: "today", text: "今日内容" },
+    { name: "star", text: "星标内容" },
+    { name: "all", text: "全部" },
+    { name: "category", text: "分类" }
+  ];
+  //this.feeds = 'abcdefg'.split("");
   this.content = "testing testing lorem ipsum";
 }])

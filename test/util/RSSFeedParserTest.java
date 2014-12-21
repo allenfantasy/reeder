@@ -42,7 +42,6 @@ public class RSSFeedParserTest {
 			String TYPE = "rss";
 			String VERSION = "0.91";
 
-			
 			assertThat(feed.getTitle()).isEqualTo(TITLE);
 			assertThat(feed.getLink()).isEqualTo(LINK);
 			assertThat(feed.getLanguage()).isEqualTo(LANGUAGE);
@@ -51,13 +50,14 @@ public class RSSFeedParserTest {
 			assertThat(feed.getType()).isEqualTo(TYPE);
 			assertThat(feed.getVersion()).isEqualTo(VERSION);
 		
+			// Test item
 			String ITEM_TITLE = "Giving the world a pluggable Gnutella";
 			String ITEM_LINK = "http://writetheweb.com/read.php?item=24";
 			String ITEM_DESC = "WorldOS is a framework on which to build programs"
 					+ " that work like Freenet or Gnutella -allowing distributed"
 					+ " applications using peer-to-peer routing.";
 			
-			LinkedHashSet<Article> articles = (LinkedHashSet<Article>) feed.articles;
+			LinkedHashSet<Article> articles = (LinkedHashSet<Article>) feed.getArticles();
 			Iterator<Article> iter = articles.iterator();
 			Article firstItem = (Article) iter.next();
 			

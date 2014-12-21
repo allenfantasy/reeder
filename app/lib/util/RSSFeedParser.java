@@ -24,9 +24,9 @@ import org.w3c.dom.*;
  * At the top level, a RSS document is a <rss> element, with a mandatory attribute called version.
  */
 public class RSSFeedParser implements FeedParser {
- 	static final String XML_FILENAME = "feed.xml";
+ 	static final String XML_FILENAME = "feed.xml"; // TODO: use generated filename
   	
-  static final String TITLE = "title";
+  /*static final String TITLE = "title";
   static final String DESCRIPTION = "description";
   static final String CHANNEL = "channel";
   static final String LANGUAGE = "language";
@@ -35,7 +35,7 @@ public class RSSFeedParser implements FeedParser {
   static final String AUTHOR = "author";
   static final String ITEM = "item";
   static final String PUB_DATE = "pubDate";
-  static final String GUID = "guid";
+  static final String GUID = "guid";*/
   
   static final String FEED_TYPE = "rss";
   
@@ -49,7 +49,7 @@ public class RSSFeedParser implements FeedParser {
    * get rss feed from URL or local file
    * helper constructor for testing.
    */
-  public RSSFeedParser(String fileName, Boolean isFile) throws MalformedURLException {
+  public RSSFeedParser(String fileName, boolean isFile) throws MalformedURLException {
   	this.url = isFile ? new File(fileName).toURI().toURL()
   			              : new URL(fileName);
   }
@@ -221,6 +221,7 @@ public class RSSFeedParser implements FeedParser {
   	  }
   		
   	} catch (Exception e) {
+  		// TODO: throw custom exception
   		e.printStackTrace();
   	}
   	return feed;
@@ -271,6 +272,7 @@ public class RSSFeedParser implements FeedParser {
   	  }
   		
   	} catch (Exception e) {
+  		// TODO: throw custom exception
   		throw new RuntimeException(e);
   	}
 	  return articles;
@@ -313,6 +315,7 @@ public class RSSFeedParser implements FeedParser {
   	try {
   		return url.openStream();
   	} catch (IOException e) {
+  		// TODO: throw custom exception
   		throw new RuntimeException(e);
   	}
   }

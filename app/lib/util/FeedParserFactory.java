@@ -14,20 +14,29 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-public class RSSFeedParserFactory {
-  public static FeedParser createRSSFeedParser(String url) throws MalformedURLException {
+public class FeedParserFactory {
+	public FeedParserFactory() {
+		
+	}
+
+	public static FeedParserFactory newInstance() {
+  	return new FeedParserFactory();
+  }
+	
+  public FeedParser createFeedParser(String url) throws MalformedURLException {
     try {
-    	return RSSFeedParserFactory.isAtom(url) ? new AtomFeedParser(url) : new RSSFeedParser(url);
+    	return isAtom(url) ? new AtomFeedParser(url) : new RSSFeedParser(url);
     } catch (IOException e) {
     	e.printStackTrace();
   		// TODO: throw custom exception
-    	return new RSSFeedParser(url);
+    	return null;
     }
   }
+  
   /*
    * Source: http://stackoverflow.com/questions/7591097/determining-whether-a-feed-is-atom-or-rss
    */
-  private static boolean isAtom(String url) {
+  private boolean isAtom(String url) {
   	try {
   		DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
     	f.setNamespaceAware(true);

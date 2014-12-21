@@ -7,9 +7,9 @@ create table article (
   id                        bigint auto_increment not null,
   description               text,
   title                     varchar(255),
+  link                      varchar(255),
   author                    varchar(255),
   pub_date                  varchar(255),
-  link                      varchar(255),
   guid                      varchar(255),
   is_readed                 boolean,
   feed_id                   bigint,
@@ -18,13 +18,14 @@ create table article (
 
 create table feed (
   id                        bigint not null,
-  source_url                varchar(255),
   title                     varchar(255),
   link                      varchar(255),
+  source_url                varchar(255),
+  pub_date                  varchar(255),
   description               varchar(255),
   language                  varchar(255),
-  copyright                 varchar(255),
-  pub_date                  varchar(255),
+  type                      varchar(255),
+  version                   varchar(255),
   constraint pk_feed primary key (id))
 ;
 

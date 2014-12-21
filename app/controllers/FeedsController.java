@@ -42,10 +42,12 @@ public class FeedsController extends Controller {
 			if (url == null) {
 				return badRequest(buildErrorInfo("no URL provided"));
 			}
-		  RSSFeedParser parser = new RSSFeedParser(url);
+
+			FeedParserFactory factory = FeedParserFactory.newInstance();
+		  FeedParser parser = factory.createFeedParser(url);
 		  //parser.print2File();
-		  //Feed feed = parser.readFeedByStream();
-	    //Feed.create(feed);
+		  Feed feed = parser.readFeed();
+	    Feed.create(feed);
 	    return status(201, json);
 		} catch (MalformedURLException e){
       //String errorMsg = e.getLocalizedMessage();

@@ -7,18 +7,40 @@
     <link rel="stylesheet" href="assets/css/main.css">
   </head>
   <body ng-controller="MainController as main">
-    <header>
-    </header>
-    <div class="main">
-      <div id="sidebar">{{ main.sidebar }}</div>
-      <div id="feeds">
-        <li ng-repeat="feed in main.feeds">
-          {{ feed }}
-        </li>
-      </div>
-      <div id="content">{{ main.content }}</div>
+    <div class="header-container" id="header-container">
+      <header>
+        <h1 class="header-logo-container">
+          <a href="/" id="header-logo">Reeder</a>
+        </h1>
+      </header>
     </div>
-    Hello Play! Ready for layout.
+    <div class="main-container">
+      <div class="main">
+        <div class="col-left" id="sidebar">
+          <nav id="view-region-nav" class="view-region-nav scrollable">
+            <div>
+              <ul id="dr-persistent-nav" class="dr-list dr-persistent-nav">
+                <li class="dr-list-item nav-{{ action.name }}" id="nav-{{ action.name }}" ng-repeat="action in main.actions">
+                  <span>{{ action.text }}</span>
+                </li>
+              </ul>
+              <div id="subscription-list">
+                <ul id="feed-list">
+                  <li ng-repeat="feed in main.feeds">
+                    {{ feed.title }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+          <div id="view-add" class="view-add"></div>
+        </div>
+        <div class="col-right">
+          <div id="feeds"></div>
+          <div id="content">{{ main.content }}</div>
+        </div>
+      </div>
+    </div>
     <script src="assets/vendors/jquery-1.9.0.min.js" type="text/javascript"></script>
     <script src="assets/vendors/angular.min.js" type="text/javascript"></script>
     <script src="assets/vendors/angular-animate.min.js" type="text/javascript"></script>
