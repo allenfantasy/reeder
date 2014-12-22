@@ -1,3 +1,45 @@
+/*** Global Style ***/
+html {
+  background: none;
+  font-family: "source sans pro", "Helvetica None", sans-serif;
+  font-size: 100%;
+  line-height: 120%;
+  margin: 0;
+  padding: 0;
+  font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*** Layout ***/
+header {
+  min-width: 768px;
+  max-width: 99.9%;
+  width: 100%;
+  position: relative;
+}
+.main-container {
+  margin: 56px auto 0;
+}
+
+.main { }
+.col-left {
+  width: 260px;
+  position: relative;
+  float: left;
+  border-right: 1px solid #dbdbdb;
+  background: #eee;
+}
+.col-right {
+  margin-left: 261px;
+  min-width: 546px;
+  min-height: 500px;
+  /* TODO should use js to control */
+  padding: 0;
+  position: relative;
+}
+
+/*** Header ***/
 .header-container {
   position: fixed;
   top: 0;
@@ -9,12 +51,6 @@
   border-bottom-width: 0;
   box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
   -webkit-box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
-}
-header {
-  min-width: 768px;
-  max-width: 99.9%;
-  width: 100%;
-  position: relative;
 }
 .header-logo-container {
   margin: 0;
@@ -30,23 +66,49 @@ header {
   display: block;
 }
 
-.main-container {
-  margin: 56px auto 0;
+/*** Sidebar Navigation ***/
+.view-region-nav {
+  padding: 13px 0 0;
 }
-
-.main {
-
-}
-.col-left {
-  width: 260px;
-  position: relative;
-  float: left;
-  border-right: 1px solid #dbdbdb;
-  background: #eee;
-}
-.col-right {
-  margin-right: 261px;
-  min-width: 546px;
+.dr-list, .dr-list-item {
   padding: 0;
+  margin: 0;
+  list-style: none;
+  display: block;
   position: relative;
+  min-height: 2.063em;
 }
+.dr-label {
+  border: 1px solid transparent;
+  font-size: 0.813em;
+  color: #333;
+  padding: 0.423em 0 0.500em 48px;
+  outline: none;
+  text-shadow: 0px 1px #fff;
+}
+.dr-label:hover {
+  background-color: #e8e8e8;
+  border-top-color: #e7e7e7;
+  border-bottom-color: #f0f0f0;
+  cursor: pointer;
+}
+
+/*** Feed Content ***/
+
+#article-list {
+  width: 350px;
+  float: left;
+  border-right: 1px solid #ccc;
+  height: 500px;
+}
+
+#article-detail {
+  margin-left: 351px;
+  position: relative;
+  height: 500px;
+  background-color: rgb(234, 234, 234);
+}
+
+/** Article list **/
+
+/** Article Detail **/

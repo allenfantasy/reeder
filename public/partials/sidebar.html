@@ -1,0 +1,24 @@
+<nav id="view-region-nav" class="view-region-nav scrollable">
+  <div>
+
+    <ul id="dr-persistent-nav" class="dr-list dr-persistent-nav">
+      <li class="dr-list-item nav-{{ action.name }}" id="nav-{{ action.name }}" ng-repeat="action in actions">
+        <div class="dr-label">
+          <span>{{ action.text }}</span>
+        </div>
+      </li>
+    </ul>
+
+    <div id="subscription-list">
+      <ul id="feed-list" class="dr-list">
+        <li class="dr-list-item" ng-repeat="feed in data.feeds">
+          <div class="dr-label" ng-click="setArticles(feed.articles)">
+            {{ feed.title }}
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+<div id="view-add" class="view-add"></div>
