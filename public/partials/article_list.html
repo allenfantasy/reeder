@@ -1,11 +1,15 @@
-<div ng-if="articles.length == 0">
+<div ng-if="data.articles.length == 0">
   No feeds...
 </div>
-<div ng-if="articles.length != 0">
-  <div ng-repeat="article in data.articles">
-    <div ng-view="articlelist"></div>
-    <article ng-click="setArticle(article)">
-      {{ article.title }}
+<div ng-if="data.articles.length != 0">
+  <div class="article-list" ng-repeat="article in data.articles">
+    <article class="{{ article.readed ? 'readed' : '' }}" ng-click="setArticle(article)">
+      <div class="icon">
+      </div>
+      <div class="meta">
+        <div class="feed-title">{{ article.feed_title }}</div>
+        <div class="article-title">{{ article.title }}</div>
+      </div>
     </article>
   </div>
 </div>

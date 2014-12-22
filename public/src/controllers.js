@@ -8,8 +8,8 @@ var feedControllers = angular.module('feedControllers', []);
 // let controllers could communicate between each other
 // by sharing and modifying data through service's API.
 
-feedControllers.controller("sidebarController", ["$scope", "$stateParams", "Feed",
-  function($scope, $stateParams, Feed) {
+feedControllers.controller("sidebarController", ["$scope", "$state", "$stateParams", "Feed",
+  function($scope, $state, $stateParams, Feed) {
     $scope.actions = [
       { name: "today", text: "今日内容" },
       { name: "star", text: "星标内容" },
@@ -17,17 +17,21 @@ feedControllers.controller("sidebarController", ["$scope", "$stateParams", "Feed
       { name: "category", text: "分类" }
     ];
     $scope.data = Feed.getData();
-    $scope.setArticles = function(articles) {
-      Feed.setArticles(articles);
+    $scope.setFeed = function(feed) {
+      Feed.setFeed(feed);
+      $state.go("feed", { id: feed.id });
     };
   }
 ]);
 
-feedControllers.controller("listController", ["$scope", "$stateParams", "Feed",
-  function($scope, $stateParams, Feed) {
+feedControllers.controller("listController", ["$scope", "$state", "$stateParams", "Feed",
+  function($scope, $state, $stateParams, Feed) {
     $scope.data = Feed.getData();
     $scope.setArticle = function(article) {
+      article.readed = true;
+      // TODO: update article's 'isReaded' status
       Feed.setArticle(article);
+      $state.go("article", { id: $scope.data.feed.id, title: article.title })
     };
   }
 ]);

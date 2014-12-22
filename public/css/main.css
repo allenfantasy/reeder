@@ -10,6 +10,14 @@ html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+a:active, a:hover {
+  outline: 0;
+}
+a:-webkit-any-link {
+  color: -webkit-link;
+  text-decoration: underline;
+  cursor: auto;
+}
 
 /*** Layout ***/
 header {
@@ -22,13 +30,16 @@ header {
   margin: 56px auto 0;
 }
 
-.main { }
+.main { overflow: hidden; }
 .col-left {
   width: 260px;
   position: relative;
   float: left;
   border-right: 1px solid #dbdbdb;
-  background: #eee;
+  background: rgb(235, 237, 243);
+  /* fix sidebar 100% height of page */
+  margin-bottom: -5000px;
+  padding-bottom: 5000px;
 }
 .col-right {
   margin-left: 261px;
@@ -80,7 +91,7 @@ header {
 }
 .dr-label {
   border: 1px solid transparent;
-  font-size: 0.813em;
+  font-size: 0.913em;
   color: #333;
   padding: 0.423em 0 0.500em 48px;
   outline: none;
@@ -95,20 +106,84 @@ header {
 
 /*** Feed Content ***/
 
+/** Article list **/
 #article-list {
   width: 350px;
   float: left;
   border-right: 1px solid #ccc;
   height: 500px;
+  overflow-y: scroll;
 }
+.article-list article {
+  height: 90px;
+  border-bottom: 1px solid #ccc;
+}
+.article-list article:hover {
+  background-color: #fafafa;
+  cursor: pointer;
+}
+  .article-list article .icon {
+    float: left;
+    width: 40px;
+    height: 100%;
+  }
+  .article-list article .meta {
+    float: left;
+    width: 310px;
+    height: 100%;
+  }
+    .article-list article .meta .feed-title {
+      height: 25px;
+      line-height: 25px;
+      color: rgb(81, 123, 184);
+    }
+    .article-list article .meta .article-title {
+      font-weight: bold;
+      width: 280px;
+      font-family: "Helvatica Neue", Helvetica, Arial, sans-serif;
+      height: 60px;
+      overflow: hidden;
+    }
 
+    .article-list article.readed .meta {
+      opacity: 0.7;
+    }
+    .article-list article.readed .meta .article-title {
+      color: #444;
+    }
+
+/** Article Detail **/
 #article-detail {
   margin-left: 351px;
   position: relative;
   height: 500px;
-  background-color: rgb(234, 234, 234);
+  overflow-y: scroll;
 }
 
-/** Article list **/
+#article-detail #no-content {
+  background-color: rgb(234, 234, 234);
+  height: 100%;
+  color: rgb(153, 153, 153);
+  text-align: center;
+  line-height: 300px;
+  font-size: 2em;
+}
 
-/** Article Detail **/
+.detail-content .detail-body {
+  width: 600px;
+  margin: 0 auto;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 0.938rem;
+  line-height: 1.467em;
+  -webkit-font-smoothing: auto;
+}
+.detail-content .detail-body img {
+  max-width: 600px;
+  height: auto;
+}
+.detail-content .detail-body a {
+  color: #0093cc;
+}
+.detail-content .detail-body a:hover {
+  color: #000;
+}

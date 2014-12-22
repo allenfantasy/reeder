@@ -1,6 +1,6 @@
 <div id="no-content" ng-if="data.article === undefined">
   No item selected.
 </div>
-<div ng-if="data.article !== undefined">
-  <div class="content" ng-bind-html="data.article.description"></div>
+<div class="detail-content" ng-if="data.article !== undefined">
+  <div class="detail-body" ng-bind-html="data.article.description"></div>
 </div>

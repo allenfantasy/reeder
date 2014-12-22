@@ -65,6 +65,8 @@ public class Article extends Model {
 		item.put("guid", guid);
 		item.put("link", link);
 		item.put("title", title);
+    item.put("readed", isReaded);
+    item.put("feed_title", feed.getTitle());
 		return item;
   }
   

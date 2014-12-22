@@ -9,8 +9,9 @@ feedService.factory('Feed',["$http", function($http) {
   return {
     data: {
       feeds: [],
+      feed: undefined,
       articles: [],
-      article: null
+      article: undefined
     },
     getData: function() {
       return this.all();
@@ -22,8 +23,9 @@ feedService.factory('Feed',["$http", function($http) {
       });
       return this.data;
     },
-    setArticles: function(articles) {
-      this.data.articles = articles;
+    setFeed: function(feed) {
+      this.data.feed = feed;
+      this.data.articles = feed.articles;
     },
     setArticle: function(article) {
       this.data.article = article;

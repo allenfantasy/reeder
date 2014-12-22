@@ -12,7 +12,7 @@
     <div id="subscription-list">
       <ul id="feed-list" class="dr-list">
         <li class="dr-list-item" ng-repeat="feed in data.feeds">
-          <div class="dr-label" ng-click="setArticles(feed.articles)">
+          <div class="dr-label" ng-click="setFeed(feed)">
             {{ feed.title }}
           </div>
         </li>
