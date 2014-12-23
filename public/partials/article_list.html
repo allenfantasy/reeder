@@ -1,4 +1,4 @@
-<div id="no-feed" ng-if="data.articles.length == 0"></div>
+<div id="no-feed" ng-if="data.articles.length == 0" resize ng-style="listResizeWithOffset()"></div>
 <div ng-if="data.articles.length != 0">
   <div class="article-list" ng-repeat="article in data.articles">
     <article class="{{ article.readed ? 'readed' : '' }}" ng-click="setArticle(article)">

@@ -3,7 +3,6 @@
 # ~~~~
 
 # Home page
-#GET     /                       controllers.ApplicationController.index()
 GET     /                       controllers.Assets.at(path="/public", file="index.html")
 
 # Feeds
@@ -20,4 +19,4 @@ POST    /api/articles/:id/read      controllers.ArticlesController.read(id: Long
 POST    /api/articles/:id/unread    controllers.ArticlesController.unread(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /*file           controllers.Assets.at(path="/public", file)
+GET     /*file                      controllers.Assets.at(path="/public", file)

@@ -48,7 +48,8 @@ public class FeedsController extends Controller {
 		  //parser.print2File();
 		  Feed feed = parser.readFeed();
 	    Feed.create(feed);
-	    return status(201, json);
+	    JsonNode feedJson = Json.toJson(feed.getData());
+	    return status(201, feedJson);
 		} catch (MalformedURLException e){
       //String errorMsg = e.getLocalizedMessage();
 			return badRequest(buildErrorInfo("invalid url format!"));

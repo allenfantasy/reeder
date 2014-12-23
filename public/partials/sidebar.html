@@ -21,4 +21,21 @@
 
   </div>
 </nav>
-<div id="view-add" class="view-add"></div>
+<div id="view-add" class="view-add">
+  <div>
+    <div class="add-btn">
+      <div class="add-btn-label" hide-add-tooltip="hideAddTooltip()" ng-click="showAddTooltip()">
+        <div class="label-inner">Add</div>
+      </div>
+      <div class="tooltip-add" hide-add-tooltip="hideAddTooltip()" ng-show="addTooltipActive">
+        <ul class="tooltip-list">
+          <li class="tooltip-list-item tooltip-input">
+            <form id="feed-add-form" ng-keydown="tryCreateFeed($event)">
+              <input type="text" id="feed-add-form-input" placeholder="请输入订阅地址" autocomplete="off">
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

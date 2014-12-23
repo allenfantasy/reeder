@@ -20,12 +20,24 @@ feedService.factory('Feed',["$http", function($http) {
       });
       return this.data;
     },
+    addFeed: function(feed) {
+      this.data.feeds.push(feed); 
+    },
     setFeed: function(feed) {
       this.data.feed = feed;
       this.data.articles = feed.articles;
     },
     setArticle: function(article) {
       this.data.article = article;
+    },
+    create: function(url, success, error) {
+      $http.post('api/feeds', { url: url }).success(success).error(error);
+    },
+    validateURL: function(url) {
+      // Credit to http://regexr.com?37i6s
+      // Also the SO answer which provide the last link: http://stackoverflow.com/a/3809435/1301194
+      var regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
+      return url.match(regex);
     }
   };
 }]);
