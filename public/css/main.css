@@ -111,8 +111,15 @@ header {
   width: 350px;
   float: left;
   border-right: 1px solid #ccc;
-  height: 500px;
+  height: 690px;
   overflow-y: scroll;
+}
+#article-list #no-feed {
+  width: 320px;
+  margin: 20px auto 0;
+  height: 650px;
+  border-radius: 5px;
+  border: 3px dashed rgb(227, 231, 234);
 }
 .article-list article {
   height: 90px;
@@ -156,7 +163,7 @@ header {
 #article-detail {
   margin-left: 351px;
   position: relative;
-  height: 500px;
+  height: 690px;
   overflow-y: scroll;
 }
 
@@ -169,21 +176,68 @@ header {
   font-size: 2em;
 }
 
-.detail-content .detail-body {
+.article-detail-wrapper {
   width: 600px;
   margin: 0 auto;
-  font-family: Georgia, "Times New Roman", Times, serif;
-  font-size: 0.938rem;
-  line-height: 1.467em;
-  -webkit-font-smoothing: auto;
 }
-.detail-content .detail-body img {
-  max-width: 600px;
-  height: auto;
+.article-detail {
+  margin-top: 2em;
 }
-.detail-content .detail-body a {
-  color: #0093cc;
-}
-.detail-content .detail-body a:hover {
-  color: #000;
-}
+  /* article body */
+  .article-body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 0.938rem;
+    line-height: 1.467em;
+    -webkit-font-smoothing: auto;
+  }
+    .article-body img {
+      max-width: 600px;
+      height: auto;
+    }
+    .article-body a {
+      color: #0093cc;
+    }
+    .article-body a:hover {
+      color: #000;
+    }
+
+  /* article title */
+  .article-detail .article-title {
+    margin: 0;
+    font-size: 1.563rem;
+    line-height: 1.200em;
+  }
+    .article-detail .article-title a {
+      color: #111;
+      text-decoration: none;
+    }
+
+  /* article meta */
+  .article-meta {
+    color: #555;
+    font-size: 13px;
+    margin: 0.125em 0 1em;
+  }
+    .article-meta-item {
+      margin-right: 1px;
+      position: relative;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    .article-meta-item, .article-meta-item-link {
+      padding: 2px 4px;
+      color: #606060;
+      display: inline-block;
+    }
+    .article-meta-item:before {
+      color: #666;
+      content: '\00B7';
+      position: absolute;
+      margin: 0 0 0 -8px;
+    }
+    .article-meta-item:first-child {
+      padding-left: 0;
+    }
+    .article-meta-item:first-child:before {
+      content: none;
+      margin: 0;
+    }

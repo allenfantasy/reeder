@@ -1,6 +1,4 @@
-<div ng-if="data.articles.length == 0">
-  No feeds...
-</div>
+<div id="no-feed" ng-if="data.articles.length == 0"></div>
 <div ng-if="data.articles.length != 0">
   <div class="article-list" ng-repeat="article in data.articles">
     <article class="{{ article.readed ? 'readed' : '' }}" ng-click="setArticle(article)">

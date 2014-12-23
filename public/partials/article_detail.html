@@ -1,6 +1,20 @@
 <div id="no-content" ng-if="data.article === undefined">
   No item selected.
 </div>
-<div class="detail-content" ng-if="data.article !== undefined">
-  <div class="detail-body" ng-bind-html="data.article.description"></div>
+<div class="article-detail-wrapper" ng-if="data.article !== undefined">
+  <article class="article-detail">
+    <h3 class="article-title">
+      <a href="{{ data.article.link }}" target="_blank">{{ data.article.title }}</a>
+    </h3>
+    <div class="article-meta">
+      <span class="article-meta-item">{{ data.article.feed_title }}</span>
+      <span class="article-meta-item">
+        By {{ data.article.author }}
+      </span>
+      <span class="article-meta-item">
+        {{ data.article.pub_date | fromNow }}
+      </span>
+    </div>
+    <div class="article-body" ng-bind-html="data.article.description"></div>
+  </article>
 </div>

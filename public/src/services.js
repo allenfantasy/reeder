@@ -3,9 +3,6 @@
 var feedService = angular.module('feedService', []);
 
 feedService.factory('Feed',["$http", function($http) {
-  /*var feeds = [];
-  var currentArticles = [];
-  var currentArticle;*/
   return {
     data: {
       feeds: [],
@@ -30,5 +27,21 @@ feedService.factory('Feed',["$http", function($http) {
     setArticle: function(article) {
       this.data.article = article;
     }
+  };
+}]);
+
+feedService.factory('Article', ["$http", function($http) {
+  return {
+    read: function(id) {
+      $http.post('api/articles/' + id + '/read').success(function(data) {
+        console.log(data);
+      });
+    },
+    unread: function(id) {
+      $http.post('api/articles/' + id + '/unread').success(function(data) {
+        console.log(data);
+      });
+    }
+    // TODO: read batch
   };
 }]);

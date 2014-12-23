@@ -4,7 +4,8 @@ var rssApp = angular.module('rssApp', [
   'ui.router',
   'ngSanitize',
   'feedService',
-  'feedControllers'
+  'feedControllers',
+  'feedFilters'
 ]);
 
 // routing config

@@ -24,13 +24,16 @@ feedControllers.controller("sidebarController", ["$scope", "$state", "$statePara
   }
 ]);
 
-feedControllers.controller("listController", ["$scope", "$state", "$stateParams", "Feed",
-  function($scope, $state, $stateParams, Feed) {
+feedControllers.controller("listController", ["$scope", "$state", "$stateParams", "Feed", "Article",
+  function($scope, $state, $stateParams, Feed, Article) {
     $scope.data = Feed.getData();
     $scope.setArticle = function(article) {
-      article.readed = true;
-      // TODO: update article's 'isReaded' status
       Feed.setArticle(article);
+      //console.log(article);
+      if (!article.readed) {
+        Article.read(article.id);
+      }
+      article.readed = true;
       $state.go("article", { id: $scope.data.feed.id, title: article.title })
     };
   }
