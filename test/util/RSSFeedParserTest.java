@@ -12,6 +12,7 @@ import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
 import models.Feed;
 import models.Article;
+import lib.exceptions.InvalidRSSFeedException;
 import lib.util.*;
 
 public class RSSFeedParserTest {
@@ -68,8 +69,9 @@ public class RSSFeedParserTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
-	
+
 	@Test
 	public void readFeedTest_V092() {
 		try {
@@ -182,5 +184,29 @@ public class RSSFeedParserTest {
 	@Test
 	public void getArticlesTest() {
 		// TODO
+	}
+
+	@Test
+	public void readFeedTest_Exception() {
+		try {
+			String url = "http://www.36kr.com";
+			RSSFeedParser parser = new RSSFeedParser(url);
+			Feed feed = parser.readFeed();
+		} catch (InvalidRSSFeedException e) {
+			assertThat(e.getMessage()).isEqualTo("invalid xml document");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void getRandomPathTest() {
+		try {
+			String filename = "test/fixtures/rss-2.xml";
+			RSSFeedParser parser = new RSSFeedParser(filename, true);
+			System.out.println(parser.getRandomPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

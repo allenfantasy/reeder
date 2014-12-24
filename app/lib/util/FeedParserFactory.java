@@ -24,13 +24,7 @@ public class FeedParserFactory {
   }
 	
   public FeedParser createFeedParser(String url) throws MalformedURLException {
-    try {
-    	return isAtom(url) ? new AtomFeedParser(url) : new RSSFeedParser(url);
-    } catch (IOException e) {
-    	e.printStackTrace();
-  		// TODO: throw custom exception
-    	return null;
-    }
+    return isAtom(url) ? new AtomFeedParser(url) : new RSSFeedParser(url);
   }
   
   /*

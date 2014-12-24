@@ -11,41 +11,32 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import lib.exceptions.InvalidFeedException;
+import lib.exceptions.InvalidRSSFeedException;
 import models.Article;
 import models.Feed;
 
 import org.apache.commons.io.FileUtils;
 import org.w3c.dom.*;
+import org.xml.sax.SAXParseException;
 
-/*
+/**
  * RSS is a Web content format.
  * It's name a an acronym of "Really Simple Syndication"
  * RSS is dialect of XML. All RSS files must conform XML 1.0 specification.
  * At the top level, a RSS document is a <rss> element, with a mandatory attribute called version.
  */
-public class RSSFeedParser implements FeedParser {
- 	static final String XML_FILENAME = "feed.xml"; // TODO: use generated filename
-  	
-  /*static final String TITLE = "title";
-  static final String DESCRIPTION = "description";
-  static final String CHANNEL = "channel";
-  static final String LANGUAGE = "language";
-  static final String COPYRIGHT = "copyright";
-  static final String LINK = "link";
-  static final String AUTHOR = "author";
-  static final String ITEM = "item";
-  static final String PUB_DATE = "pubDate";
-  static final String GUID = "guid";*/
-  
+public class RSSFeedParser extends FeedParser {
   static final String FEED_TYPE = "rss";
   
   final URL url;
+  private String feed_type = FEED_TYPE;
 	
   public RSSFeedParser(String feedUrl) throws MalformedURLException {
   	this.url = new URL(feedUrl);
   }
   
-  /*
+  /**
    * get rss feed from URL or local file
    * helper constructor for testing.
    */
@@ -54,10 +45,11 @@ public class RSSFeedParser implements FeedParser {
   			              : new URL(fileName);
   }
   
-  public Feed readFeed() throws IOException {
+  public Feed readFeed() throws IOException, InvalidFeedException {
   	Feed feed = null;
+  	File xmlFile = null;
   	try {
-  		print2File();
+  		String filePath = writeFeed2File();
   		
   		String title;
   		String link;
@@ -68,7 +60,7 @@ public class RSSFeedParser implements FeedParser {
   		String guid;
   		String version = null;
   		
-  		File xmlFile = new File(XML_FILENAME);
+  		xmlFile = new File(filePath);
   		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
   		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
   		Document doc = dBuilder.parse(xmlFile);
@@ -80,7 +72,9 @@ public class RSSFeedParser implements FeedParser {
   	  if (rssNode.getNodeType() == Node.ELEMENT_NODE) {
   	  	Element rssElem = (Element) rssNode;
   	  	version = rssElem.getAttribute("version");
-  	  	// TODO: throw "invalid rss feed" exception if version is null
+  	  	if (version == null) {
+  	  		throw new InvalidRSSFeedException("version is null");
+  	  	}
   	  }
   	  Node channelNode = doc.getElementsByTagName("channel").item(0);
   	  if (channelNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -102,7 +96,7 @@ public class RSSFeedParser implements FeedParser {
 				NodeList items = elem.getElementsByTagName("item");
 				for(int index = 0; index < items.getLength(); index++) {
 					Element itemElem = (Element) items.item(index);
-					/*
+					/**
 					 * RSS 0.92 Compatibility
 					 * 
 					 * In 0.91 <link> and <title> are `required` sub-element of <item>
@@ -169,7 +163,7 @@ public class RSSFeedParser implements FeedParser {
 					 * a simple RSS aggregator and reader.
 					 */
 					
-					/*
+					/**
 					 * RSS 2.0 Compatibility
 					 * 
 					 * Elements of <item> are listed below:
@@ -219,25 +213,39 @@ public class RSSFeedParser implements FeedParser {
 					feed.getArticles().add(article);
 				}
   	  }
-  		
+  	} catch (InvalidFeedException e) {
+  		InvalidFeedException exception = new InvalidRSSFeedException(e.getMessage());
+  		exception.initCause(e);
+  		throw exception;
+  	} catch (SAXParseException e) {
+  		InvalidFeedException exception = new InvalidRSSFeedException("invalid xml document");
+  		exception.initCause(e);
+  		throw exception;
   	} catch (Exception e) {
-  		// TODO: throw custom exception
+  		InvalidFeedException exception = new InvalidRSSFeedException(e.getMessage());
+  		exception.initCause(e);
   		e.printStackTrace();
+  		throw exception;
+  	} finally {
+  	  cleanFile(xmlFile);  		
   	}
   	return feed;
   }
   
-  public List<Article> getArticles() {
+  public List<Article> getArticles() throws InvalidFeedException {
   	List<Article> articles = new ArrayList<Article>();
+  	File xmlFile = null;
   	try {
-  		print2File();
+  		String filePath = writeFeed2File();
   		String title;
   		String link;
   		String pubDate;
   		String description;
   		String author;
   		String guid;
-  		File xmlFile = new File(XML_FILENAME);
+  		String version = null;
+  				
+  		xmlFile = new File(filePath);
   		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
   		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
   		Document doc = dBuilder.parse(xmlFile);
@@ -245,6 +253,16 @@ public class RSSFeedParser implements FeedParser {
   		//optional but recommended
   		doc.getDocumentElement().normalize();
   	  Node channelNode = doc.getElementsByTagName("channel").item(0);
+  	  
+  	  // get version of this RSS document
+  		Node rssNode = doc.getElementsByTagName("rss").item(0);
+  	  if (rssNode.getNodeType() == Node.ELEMENT_NODE) {
+  	  	Element rssElem = (Element) rssNode;
+  	  	version = rssElem.getAttribute("version");
+  	  	if (version == null) {
+  	  		throw new InvalidRSSFeedException("version is null");
+  	  	}
+  	  }
   	  
   	  if (channelNode.getNodeType() == Node.ELEMENT_NODE) {
   	  	Element elem = (Element) channelNode;
@@ -260,7 +278,21 @@ public class RSSFeedParser implements FeedParser {
 					title = DOMUtil.getElementContent(itemElem, "title");
 					link = DOMUtil.getElementContent(itemElem, "link");
 					
-					// TODO: compatible with RSS 0.92
+					// compatible with RSS 0.92
+					if (version.equals("0.92")) {
+						// Implement <source>, <enclosure> and <category>
+						if (DOMUtil.subElementExists(itemElem, "source")) {
+							title = DOMUtil.getElementContent(itemElem, "source");
+							Element sourceElem = (Element) elem.getElementsByTagName("source").item(0);
+							link = sourceElem.getAttribute("url");
+						} else if (DOMUtil.subElementExists(itemElem, "enclosure")) {
+							Element enclosureElem = (Element) elem.getElementsByTagName("enclosure").item(0);
+							link = enclosureElem.getAttribute("url");
+						} else if (DOMUtil.subElementExists(itemElem, "category")) {
+							Element categoryElem = (Element) elem.getElementsByTagName("category").item(0);
+							link = categoryElem.getAttribute("domain");
+						}
+					}
 
 					author = DOMUtil.getElementContent(itemElem, "author");
 					pubDate = DOMUtil.getElementContent(itemElem, "pubDate");
@@ -270,15 +302,31 @@ public class RSSFeedParser implements FeedParser {
 					articles.add(article);
 				}
   	  }
-  		
+  	} catch (InvalidFeedException e) {
+  		InvalidFeedException exception = new InvalidRSSFeedException(e.getMessage());
+  		exception.initCause(e);
+  		throw exception;
+  	} catch (SAXParseException e) {
+  		InvalidFeedException exception = new InvalidRSSFeedException(e.getMessage());
+  		exception.initCause(e);
+  		throw exception;
   	} catch (Exception e) {
-  		// TODO: throw custom exception
-  		throw new RuntimeException(e);
+  		InvalidFeedException exception = new InvalidRSSFeedException(e.getMessage());
+  		exception.initCause(e);
+  		e.printStackTrace();
+  		throw exception; 
+  	} finally {
+  	  cleanFile(xmlFile);
   	}
 	  return articles;
   }
   
-  public void print2File() throws IOException {
+  /**
+   * Fetch feed content and store it into a file
+   * Return the filePath thus the caller could use it
+   * to get the content of the file
+   */
+  public String writeFeed2File() throws InvalidFeedException {
   	// PLAN A
   	/*InputStream inStream = read();
   	BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
@@ -300,23 +348,54 @@ public class RSSFeedParser implements FeedParser {
   	}*/
 
   	// PLAN B
+  	String filePath = generateRandomFilepath();
   	InputStream inStream = read();
-  	File targetFile = new File(XML_FILENAME);
-  	if (!targetFile.exists()) targetFile.createNewFile();
+  	File targetFile;
+  	if (inStream == null) {
+  		throw new InvalidRSSFeedException("fail to fetch url inputstream");
+  	}
   	
-  	FileUtils.copyInputStreamToFile(inStream, targetFile);
+  	try {
+  		targetFile = new File(filePath);
+    	if (!targetFile.exists()) targetFile.createNewFile();
+  	} catch (IOException e) {
+  		throw new InvalidRSSFeedException("cannot create file");
+  	}
+
+  	try {
+  		FileUtils.copyInputStreamToFile(inStream, targetFile);
+  	} catch (IOException e) {
+  		System.out.println(e.getMessage());
+  		throw new InvalidRSSFeedException("cannot read inputstream to file");
+  	}
+  	return filePath;
   }
   
   public String getSourceURL() {
   	return this.url.toString();
   }
   
+  /**
+   * Only for testing
+   * @return {String} a random file path
+   */
+  public String getRandomPath() {
+  	return generateRandomFilepath();
+  }
+  
+  protected String getFeedType() {
+  	return this.feed_type;
+  }
+  protected void cleanFile(File f) {
+  	if (f != null) {
+  		f.delete();
+  	}
+  }
   private InputStream read() {
   	try {
   		return url.openStream();
   	} catch (IOException e) {
-  		// TODO: throw custom exception
-  		throw new RuntimeException(e);
+  		return null;
   	}
   }
 }

@@ -89,6 +89,16 @@ public class AtomFeedParserTest {
 	
 	@Test
 	public void getArticlesTest() {
-		// TODO
+	}
+	
+	@Test
+	public void getRandomPathTest() {
+		try {
+			String filename = "test/fixtures/atom.xml";
+			AtomFeedParser parser = new AtomFeedParser(filename, true);
+			System.out.println(parser.getRandomPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

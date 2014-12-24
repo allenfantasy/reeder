@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import models.Article;
 import models.Feed;
+import lib.exceptions.InvalidFeedException;
 import lib.util.*;
 import play.*;
 import play.libs.Json;
@@ -32,31 +33,40 @@ public class FeedsController extends Controller {
   }
 	
 	@BodyParser.Of(BodyParser.Json.class)
-  public static Result create() throws IOException {
-		try {
-			JsonNode json = request().body().asJson();
-			if (json == null) {
-				return badRequest(buildErrorInfo("invalid json format"));
-			}
-			String url = json.findPath("url").textValue();
-			if (url == null) {
-				return badRequest(buildErrorInfo("no URL provided"));
-			}
+  public static Result create() {
+		JsonNode returnNode;
+		JsonNode json = request().body().asJson();
+		if (json == null) {
+			return badRequest(buildErrorInfo("invalid json format"));
+		}
+		String url = json.findPath("url").textValue();
+		if (url == null) {
+			return badRequest(buildErrorInfo("no URL provided"));
+		}
+		FeedParserFactory factory = FeedParserFactory.newInstance();
 
-			FeedParserFactory factory = FeedParserFactory.newInstance();
-		  FeedParser parser = factory.createFeedParser(url);
-		  //parser.print2File();
-		  Feed feed = parser.readFeed();
-	    Feed.create(feed);
-	    JsonNode feedJson = Json.toJson(feed.getData());
-	    return status(201, feedJson);
-		} catch (MalformedURLException e){
-      //String errorMsg = e.getLocalizedMessage();
-			return badRequest(buildErrorInfo("invalid url format!"));
+		//parser.print2File();
+		try {
+		  FeedParser parser = factory.createFeedParser(url); 	// throws MalformedURLException
+		  Feed feed = parser.readFeed(); 											// throws InvalidFeedException, IOException
+		  Feed.create(feed);
+		  returnNode = Json.toJson(feed.getData());
+		  return status(201, returnNode);
+		} catch (MalformedURLException e) {
+		  return badRequest(buildErrorInfo("invalid url format!"));
+		} catch (InvalidFeedException e) {
+		  return badRequest(buildErrorInfo(e.getMessage()));
+		} catch (IOException e) {
+		  e.printStackTrace();
+		  return badRequest(buildErrorInfo("IOException"));
+		} catch (Exception e) {
+		  // protection
+		  e.printStackTrace();
+		  return badRequest(buildErrorInfo("Exception"));
 		}
   }
 	
-  public static Result show(Long id) throws NullPointerException, EntityNotFoundException {
+  public static Result show(Long id) {
   	try {
   		Feed feed = Feed.findById(id);
   		JsonNode json = Json.toJson(feed.getData());
@@ -65,6 +75,9 @@ public class FeedsController extends Controller {
   		return notFound(buildErrorInfo("not found"));
   	} catch (NullPointerException e) {
   		return notFound(buildErrorInfo("not found"));
+  	} catch (Exception e) {
+  		e.printStackTrace();
+  		return badRequest(buildErrorInfo("Exception"));
   	}
   }
 	
@@ -78,10 +91,13 @@ public class FeedsController extends Controller {
 	  	return ok(json);
 		} catch (NullPointerException e) {
 			return notFound(buildErrorInfo("not found"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return badRequest(buildErrorInfo("Exception"));
 		}
   }
   
-  public static Result delete(Long id) throws NullPointerException, OptimisticLockException {
+  public static Result delete(Long id) {
   	try {
   		Feed.delete(id);
   		return ok();
@@ -89,6 +105,9 @@ public class FeedsController extends Controller {
   		return notFound(buildErrorInfo("not found"));
   	} catch (NullPointerException e) {
   		return notFound(buildErrorInfo("not found"));
+  	} catch (Exception e) {
+  		e.printStackTrace();
+  		return badRequest(buildErrorInfo("Exception"));
   	}
   }
   
@@ -97,7 +116,7 @@ public class FeedsController extends Controller {
   	try {
   		Feed feed = Feed.findById(id);
   		RSSFeedParser parser = new RSSFeedParser(feed.getSourceURL());
-  		parser.print2File();
+  		parser.writeFeed2File();
   		List<Article> articles = parser.getArticles();
   		List<Article> newArticles = new ArrayList<Article>();
   		for(Article article : articles) {
@@ -112,6 +131,7 @@ public class FeedsController extends Controller {
   	} catch (EntityNotFoundException e) {
   		return notFound(buildErrorInfo("not found"));
   	} catch (Exception e) {
+  		e.printStackTrace();
     	return internalServerError(buildErrorInfo("internal error"));
   	}
   }
@@ -129,8 +149,10 @@ public class FeedsController extends Controller {
   		}
   		return ok();
   	} catch (EntityNotFoundException e) {
+  		e.printStackTrace();
   		return notFound(buildErrorInfo("internal error"));
   	} catch (Exception e) {
+  		e.printStackTrace();
   		return internalServerError(buildErrorInfo("internal error"));
   	}
   }
