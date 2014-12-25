@@ -60,7 +60,7 @@ public class RSSFeedParserTest {
 			
 			LinkedHashSet<Article> articles = (LinkedHashSet<Article>) feed.getArticles();
 			Iterator<Article> iter = articles.iterator();
-			Article firstItem = (Article) iter.next();
+			Article firstItem = iter.next();
 			
 			assertThat(firstItem.getTitle()).isEqualTo(ITEM_TITLE);
 			assertThat(firstItem.getLink()).isEqualTo(ITEM_LINK);

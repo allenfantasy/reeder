@@ -81,8 +81,13 @@ public class FeedsController extends Controller {
   	}
   }
 	
+  /**
+   * update Feed's title ONLY
+   * @param id
+   * @return
+   */
 	@BodyParser.Of(BodyParser.Json.class)
-  public static Result update(Long id) throws NullPointerException {
+  public static Result update(Long id) {
 		try {
 			JsonNode json = request().body().asJson();
 	  	String title = json.findPath("title").textValue();
@@ -136,7 +141,7 @@ public class FeedsController extends Controller {
   	}
   }
   
-  /*
+  /**
    * Set all articles under a feed into 'readed'
    */
   @BodyParser.Of(BodyParser.Json.class)

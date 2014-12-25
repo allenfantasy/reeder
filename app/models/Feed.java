@@ -39,7 +39,7 @@ public class Feed extends Model {
   	this.pubDate = node.findPath("pubDate").textValue();
   }
   
-  /*
+  /**
    * Full-attr constructor
    */
   public Feed(String title, String link, String description, String language,
@@ -54,7 +54,7 @@ public class Feed extends Model {
 		this.version = version;
   }
   
-  /*
+  /**
    * Part-attr constructor: ignore type and version
    */
   public Feed(String title, String link, String description, String language,
@@ -93,6 +93,9 @@ public class Feed extends Model {
   public static Feed findById(Long id) {
   	return find.ref(id);
   }
+  public static Feed first() {
+  	return find.all().get(0);
+  }
  
   /*
    * toString() helper
@@ -117,6 +120,9 @@ public class Feed extends Model {
   
   public String getTitle() {
   	return this.title;
+  }
+  public void setTitle(String title) {
+  	this.title = title;
   }
   
   public String getLink() {
@@ -156,7 +162,7 @@ public class Feed extends Model {
    */
   public static void updateTitle(Feed feed, String title) {
     if (title != null) {
-    	feed.title = title;
+    	feed.setTitle(title);
     	feed.update(); // to database
     }
   }

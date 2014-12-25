@@ -12,6 +12,7 @@ GET     /api/feeds/:id              controllers.FeedsController.show(id: Long)
 POST    /api/feeds/:id              controllers.FeedsController.update(id: Long)
 DELETE  /api/feeds/:id              controllers.FeedsController.delete(id: Long)
 GET     /api/feeds/:id/refresh      controllers.FeedsController.refresh(id: Long)
+POST    /api/feeds/:id/read         controllers.FeedsController.read(id: Long)
 
 # Articles
 GET     /api/articles               controllers.ArticlesController.index()
