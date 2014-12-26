@@ -78,12 +78,17 @@ public class Feed extends Model {
 		item.put("type", type);
 		item.put("version", version);
 		
+		boolean cleared = true;
 		// preprocess all articles (remove the 'feed' reference)
 		List<Object> articleValues = new ArrayList<Object>();
 		for (Article a : articles) {
 			articleValues.add(a.getData());
+			if (!a.isReaded()) {
+				cleared = false;
+			}
 		}
 		item.put("articles", articleValues);
+		item.put("cleared", cleared);
   	return item;
   }
   

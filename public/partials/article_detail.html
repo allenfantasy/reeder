@@ -1,20 +1,26 @@
-<div id="no-content" ng-if="data.article === undefined">
+<div id="no-content" ng-if="article === undefined">
   No item selected.
 </div>
-<div class="article-detail-wrapper" ng-if="data.article !== undefined">
-  <article class="article-detail">
+<div class="article-detail-wrapper" ng-if="article !== undefined">
+  <article class="article-detail" target-blank>
     <h3 class="article-title">
-      <a href="{{ data.article.link }}" target="_blank">{{ data.article.title }}</a>
+      <a href="{{ article.link }}" target="_blank">{{ article.title }}</a>
     </h3>
     <div class="article-meta">
-      <span class="article-meta-item">{{ data.article.feed_title }}</span>
+      <span class="article-meta-item">{{ article.feed_title }}</span>
       <span class="article-meta-item">
-        By {{ data.article.author }}
+        By {{ article.author }}
       </span>
       <span class="article-meta-item">
-        {{ data.article.pub_date | fromNow }}
+        {{ article.pub_date | fromNow }}
+      </span>
+      <span class="article-meta-item toggle-read-state" ng-click="toggleReadState()">
+        {{ article.readed ? "Mark as Unread" : "Mark as Read" }}
       </span>
     </div>
-    <div class="article-body" ng-bind-html="data.article.description"></div>
+    <div class="article-body" ng-bind-html="article.description"></div>
   </article>
+</div>
+<div class="article-ctrl" ng-if="article !== undefined">
+  <img ng-src="{{ article.starred ? 'images/ic_star_24px.svg' : 'images/ic_star_outline_24px.svg' }}" ng-click="toggleStarState()">
 </div>

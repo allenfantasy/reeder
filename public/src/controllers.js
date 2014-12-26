@@ -10,16 +10,24 @@ var feedControllers = angular.module('feedControllers', []);
 
 feedControllers.controller("sidebarController", ["$scope", "$window", "$state", "$stateParams", "Feed",
   function($scope, $window, $state, $stateParams, Feed) {
+    // models initialization
+    $scope.feeds = [];
+    $scope.currentFeed = null;
     $scope.actions = [
       { name: "today", text: "今日内容" },
       { name: "star", text: "星标内容" },
       { name: "all", text: "全部" },
       { name: "category", text: "分类" }
     ];
-    $scope.data = Feed.getData();
+
+    Feed.all(function(feeds) {
+      $scope.feeds = feeds;
+      //console.log(feeds);
+    });
+
     $scope.setFeed = function(feed) {
       Feed.setFeed(feed);
-      console.log(feed.articles);
+      $scope.currentFeed = feed;
       $state.go("feed", { id: feed.id });
     };
 
@@ -73,7 +81,8 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
 
 feedControllers.controller("listController", ["$scope", "$state", "$stateParams", "Feed", "Article",
   function($scope, $state, $stateParams, Feed, Article) {
-    $scope.data = Feed.getData();
+    $scope.articles = Feed.getArticles();
+    $scope.feed = Feed.getFeed();
     $scope.setArticle = function(article) {
       Feed.setArticle(article);
       //console.log(article);
@@ -81,16 +90,61 @@ feedControllers.controller("listController", ["$scope", "$state", "$stateParams"
         Article.read(article.id);
       }
       article.readed = true;
-      $state.go("article", { id: $scope.data.feed.id, title: article.title })
+      // check if the feed's articles are all read. Update feed's "cleared" attr if so.
+      var feed = Feed.getFeed();
+      var cleared = true;
+      for(var i = 0; i < feed.articles.length; i++) {
+        if (!feed.articles[i].readed) {
+          cleared = false;
+          break;
+        }
+      }
+      Feed.setFeedCleared();
+      //if (cleared) feed.cleared = true;
+      $state.go("article", { id: $scope.feed.id, title: article.title })
     };
   }
 ]);
 
-feedControllers.controller("detailController", ["$scope", "$sce", "$stateParams", "Feed",
-  function($scope, $sce, $stateParams, Feed) {
-    $scope.data = Feed.getData();
+feedControllers.controller("detailController", ["$scope", "$sce", "$stateParams", "Feed", "Article",
+  function($scope, $sce, $stateParams, Feed, Article) {
+    $scope.article = Feed.getArticle();
     $scope.renderHtml = function(html) {
       return $sce.trustAsHtml(html);
-    }
+    };
+    $scope.toggleReadState = function() {
+      $scope.article.readed = !$scope.article.readed;
+
+      var feed = Feed.getFeed();
+
+      if ($scope.article.readed) {
+        Article.read($scope.article.id);
+        var cleared = true;
+        for(var i = 0; i < feed.articles.length; i++) {
+          if (!feed.articles[i].readed) {
+            cleared = false;
+            break;
+          }
+        }
+        if (cleared) feed.cleared = true;
+      } else {
+        Article.unread($scope.article.id);
+        //Feed.setFeedCleared();
+        feed.cleared = false;
+      }
+
+      var allFeeds = Feed.getFeeds();
+      console.log(feed);
+      console.log(allFeeds);
+    };
+    $scope.toggleStarState = function() {
+      $scope.article.starred = !$scope.article.starred;
+
+      if ($scope.article.starred) {
+        Article.star($scope.article.id);
+      } else {
+        Article.unstar($scope.article.id);
+      }
+    };
   }
 ]);

@@ -25,6 +25,18 @@ public class ArticlesController extends Controller {
 		JsonNode json = Json.toJson(results);
 		return ok(json);
 	}
+	
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result starredIndex() {
+		List results = new ArrayList();
+		List<Article> articles = Article.allStarred();
+		for(Article article : articles) {
+			Map<String, Object> item = article.getData();
+			results.add(item);
+		}
+		JsonNode json = Json.toJson(results);
+		return ok(json);
+	}
 
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result read(Long id) {
@@ -58,6 +70,32 @@ public class ArticlesController extends Controller {
 	
 	public static Result unreadPatch() {
 		return TODO;
+	}
+	
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result star(Long id) {
+		try {
+			Article a = Article.findById(id);
+			a.star();
+			return ok(Json.toJson(a.getData()));
+		} catch (EntityNotFoundException e) {
+			return notFound(buildErrorInfo("not found"));
+		} catch (Exception e) {
+			return internalServerError(buildErrorInfo("internal error"));
+		}
+	}
+	
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result unstar(Long id) {
+		try {
+			Article a = Article.findById(id);
+			a.unstar();
+			return ok(Json.toJson(a.getData()));
+		} catch (EntityNotFoundException e) {
+			return notFound(buildErrorInfo("not found"));
+		} catch (Exception e) {
+			return internalServerError(buildErrorInfo("internal error"));
+		}
 	}
 	
 	private static ObjectNode buildErrorInfo(String msg) {

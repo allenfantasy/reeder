@@ -4,31 +4,47 @@ var feedService = angular.module('feedService', []);
 
 feedService.factory('Feed',["$http", function($http) {
   return {
-    data: {
-      feeds: [],
-      feed: undefined,
-      articles: [],
-      article: undefined
-    },
-    getData: function() {
-      return this.all();
-    },
-    all: function() {
+    // datas
+    feeds: [],
+    feed: undefined,
+    articles: [],
+    article: undefined,
+
+    all: function(cb) {
       var self = this;
       $http.get('api/feeds').success(function(feeds) {
-        self.data.feeds = feeds;
+        self.feeds = feeds;
+        cb(self.feeds);
       });
-      return this.data;
     },
+    getFeeds: function() {
+      return this.feeds;
+    },
+
     addFeed: function(feed) {
-      this.data.feeds.push(feed); 
+      this.feeds.push(feed);
+    },
+    getFeed: function(feed) {
+      return this.feed;
     },
     setFeed: function(feed) {
-      this.data.feed = feed;
-      this.data.articles = feed.articles;
+      this.feed = feed;
+      this.articles = feed.articles;
+    },
+
+    setFeedCleared: function() {
+      this.feed.cleared = false;
+    },
+
+    getArticles: function() {
+      return this.articles;
+    },
+
+    getArticle: function() {
+      return this.article;
     },
     setArticle: function(article) {
-      this.data.article = article;
+      this.article = article;
     },
     create: function(url, success, error) {
       $http.post('api/feeds', { url: url }).success(success).error(error);
@@ -43,14 +59,29 @@ feedService.factory('Feed',["$http", function($http) {
 }]);
 
 feedService.factory('Article', ["$http", function($http) {
+  // TODO: Add callbacks
   return {
     read: function(id) {
       $http.post('api/articles/' + id + '/read').success(function(data) {
+        console.log('read success');
         console.log(data);
       });
     },
     unread: function(id) {
       $http.post('api/articles/' + id + '/unread').success(function(data) {
+        console.log('unread success');
+        console.log(data);
+      });
+    },
+    star: function(id) {
+      $http.post('api/articles/' + id + '/star').success(function(data) {
+        console.log('star success');
+        console.log(data);
+      });
+    },
+    unstar: function(id) {
+      $http.post('api/articles/' + id + '/unstar').success(function(data) {
+        console.log('unstar success');
         console.log(data);
       });
     }

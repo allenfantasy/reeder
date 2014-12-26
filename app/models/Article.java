@@ -22,6 +22,7 @@ public class Article extends Model {
   private String pubDate;
   private String guid;
   private Boolean isReaded;
+  private Boolean isStarred;
   
   @ManyToOne
   @Required
@@ -38,6 +39,16 @@ public class Article extends Model {
   	return find.all();
   }
   
+  public static List<Article> allStarred() {
+  	// TODO: get all starred item
+  	return find.all();
+  	//return find.where("");
+  }
+  
+  public static Article findById(Long id) {
+  	return find.byId(id);
+  }
+  
   /*
    * Constructor
    */
@@ -51,10 +62,7 @@ public class Article extends Model {
   	this.title = title;
   	this.pubDate = pubDate;
   	this.isReaded = false; // default unread
-  }
-  
-  public static Article findById(Long id) {
-  	return find.byId(id);
+  	this.isStarred = false; // default unstarred
   }
   
   public Map<String, Object> getData() {
@@ -67,6 +75,7 @@ public class Article extends Model {
 		item.put("title", title);
 		item.put("pub_date", pubDate);
     item.put("readed", isReaded);
+    item.put("starred", isStarred);
     item.put("feed_title", feed.getTitle());
 		return item;
   }
@@ -132,12 +141,24 @@ public class Article extends Model {
   public Boolean isReaded() {
   	return this.isReaded;
   }
+  public Boolean isStarred() {
+  	return this.isStarred;
+  }
+  
   public void read() {
   	this.isReaded = true;
   	this.save();
   }
   public void unread() {
   	this.isReaded = false;
+  	this.save();
+  }
+  public void star() {
+  	this.isStarred = true;
+  	this.save();
+  }
+  public void unstar() {
+  	this.isStarred = false;
   	this.save();
   }
   

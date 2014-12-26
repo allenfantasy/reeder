@@ -12,6 +12,7 @@ create table article (
   pub_date                  varchar(255),
   guid                      varchar(255),
   is_readed                 boolean,
+  is_starred                boolean,
   feed_id                   bigint,
   constraint pk_article primary key (id))
 ;

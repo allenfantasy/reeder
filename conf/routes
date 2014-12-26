@@ -18,6 +18,8 @@ POST    /api/feeds/:id/read         controllers.FeedsController.read(id: Long)
 GET     /api/articles               controllers.ArticlesController.index()
 POST    /api/articles/:id/read      controllers.ArticlesController.read(id: Long)
 POST    /api/articles/:id/unread    controllers.ArticlesController.unread(id: Long)
+POST    /api/articles/:id/star      controllers.ArticlesController.star(id: Long)
+POST    /api/articles/:id/unstar    controllers.ArticlesController.unstar(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /*file                      controllers.Assets.at(path="/public", file)
