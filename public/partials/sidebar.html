@@ -11,9 +11,10 @@
 
     <div id="subscription-list">
       <ul id="feed-list" class="dr-list">
-        <li class="dr-list-item" ng-repeat="feed in feeds">
-          <div class="dr-label" ng-class="{clear: feed.cleared}" ng-click="setFeed(feed)">
+        <li class="dr-list-item" ng-class="{active: isActiveItem(feed)}" ng-repeat="feed in feeds">
+          <div class="dr-label" ng-class="{'all-readed': feed.allReaded}" ng-click="setFeed(feed)">
             {{ feed.title }}
+            <span class="update-title" ng-click="showUpdateForm(feed, $event)"></span>
           </div>
         </li>
       </ul>
@@ -39,3 +40,5 @@
     </div>
   </div>
 </div>
+
+<feed-update-form ng-show="selectedFeed !== null"></feed-update-form>

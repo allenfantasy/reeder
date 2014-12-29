@@ -1,0 +1,11 @@
+<div class="backdrop" ng-click="hideUpdateForm()"></div>
+<div class="content">
+  <div class="label">Update feed's title</div>
+  <div class="form">
+    <form name="titleForm" ng-submit="submitUpdateForm()">
+      <input ng-model="selectedFeed.title" required name="title" type="text" autocomplete="off">
+      <span ng-show="titleForm.title.$error.required">Title cannot be blank</span>
+      <input type="submit" value="Update">
+    </form>
+  </div>
+</div>

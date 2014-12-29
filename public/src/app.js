@@ -26,6 +26,10 @@ rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     "article-detail": {
       templateUrl: "partials/article_detail.html",
       controller: "detailController as detail"
+    },
+    "header-ctrl": {
+      templateUrl: "partials/header_ctrl.html",
+      controller: "headerController as header"
     }
   };
 

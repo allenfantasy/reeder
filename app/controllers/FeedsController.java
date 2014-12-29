@@ -150,6 +150,7 @@ public class FeedsController extends Controller {
   		Feed feed = Feed.findById(id);
   		Set<Article> articles = feed.getArticles();
   		for(Article a : articles) {
+  			// TODO do this in batch. one by one is tooooo bad.
   			a.read();
   		}
   		return ok();

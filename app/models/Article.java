@@ -77,6 +77,7 @@ public class Article extends Model {
     item.put("readed", isReaded);
     item.put("starred", isStarred);
     item.put("feed_title", feed.getTitle());
+    item.put("feed_id", feed.id);
 		return item;
   }
   
