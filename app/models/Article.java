@@ -82,12 +82,22 @@ public class Article extends Model {
   }
   
   @Override
-  public boolean equals(Object other) {
-  	// TODO: test this
-  	if (other.getClass() != Article.class) return false;
-  	Article article = (Article)other;
-  	if (article.getGuid() == null) return false;
-  	return article.getGuid() == this.getGuid();
+  public boolean equals(Object obj) {
+  	if (obj instanceof Article) {
+  		if (this == obj) return true; // same reference
+    	if (this.getGuid().equals( ((Article) obj).getGuid() )) {
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
+  	}
+  	return false;
+  }
+  
+  @Override
+  public int hashCode() {
+  	return this.getGuid().hashCode();
   }
 
   public Feed getFeed() {

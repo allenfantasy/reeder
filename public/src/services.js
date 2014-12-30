@@ -10,17 +10,9 @@ feedService.factory('Feed',["$http", "$rootScope", function($http, $rootScope) {
     articles: [],
     article: undefined,
 
-    all: function(cb) {
-      var self = this;
-      $http.get('api/feeds').success(function(feeds) {
-        self.feeds = feeds;
-        cb(self.feeds);
-      });
-    },
     getFeeds: function() {
       return this.feeds;
     },
-
     addFeed: function(feed) {
       this.feeds.push(feed);
     },
@@ -31,12 +23,6 @@ feedService.factory('Feed',["$http", "$rootScope", function($http, $rootScope) {
       this.feed = feed;
       this.articles = feed.articles;
     },
-    updateFeedTitle: function(id, title, success, error) {
-      $http.post('api/feeds/' + id, { title: title })
-        .success(success)
-        .error(error);
-    },
-
     getArticles: function() {
       return this.articles;
     },
@@ -46,17 +32,37 @@ feedService.factory('Feed',["$http", "$rootScope", function($http, $rootScope) {
     setArticle: function(article) {
       this.article = article;
     },
+    addArticles: function(feedId, articles) {
+      for(var i = 0; i < this.feeds.length; i++) {
+        if (this.feeds[i].id == feedId) {
+          this.feeds[i].articles = this.feeds[i].articles.concat(articles);
+          break;
+        }
+      }
+    },
 
+    all: function(cb) {
+      var self = this;
+      $http.get('api/feeds').success(function(feeds) {
+        self.feeds = feeds;
+        cb(self.feeds);
+      });
+    },
+    updateFeedTitle: function(id, title, success, error) {
+      $http.post('api/feeds/' + id, { title: title })
+      .success(success)
+      .error(error);
+    },
     create: function(url, success, error) {
-      $http.post('api/feeds', { url: url }).success(success).error(error);
+      $http.post('api/feeds', { url: url })
+        .success(success)
+        .error(error);
     },
-    validateURL: function(url) {
-      // Credit to http://regexr.com?37i6s
-      // Also the SO answer which provide the last link: http://stackoverflow.com/a/3809435/1301194
-      var regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
-      return url.match(regex);
+    refresh: function(ids, success, error) {
+      $http.post('api/feeds/refresh', { ids: ids }, { timeout: 20 * 1000 })
+        .success(success)
+        .error(error);
     },
-
     readFeed: function() {
       var feedId = this.feed.id;
       var feed;
@@ -80,6 +86,14 @@ feedService.factory('Feed',["$http", "$rootScope", function($http, $rootScope) {
         console.log(data);
       });
     },
+
+    validateURL: function(url) {
+      // Credit to http://regexr.com?37i6s
+      // Also the SO answer which provide the last link: http://stackoverflow.com/a/3809435/1301194
+      var regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
+      return url.match(regex);
+    },
+
     readArticle: function(article) {
       var feedId = article.feed_id;
       var articleId = article.id;

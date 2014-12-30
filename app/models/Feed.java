@@ -145,6 +145,9 @@ public class Feed extends Model {
   public String getPubDate() {
   	return this.pubDate;
   }
+  public void setPubDate(String pubDate) {
+  	this.pubDate = pubDate;
+  }
   
   public String getSourceURL() {
   	return this.sourceUrl;

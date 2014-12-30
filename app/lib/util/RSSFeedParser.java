@@ -232,7 +232,15 @@ public class RSSFeedParser extends FeedParser {
   	return feed;
   }
   
-  public List<Article> getArticles() throws InvalidFeedException {
+  /**
+   * Fetch latest Articles of Feed, and update the Feed
+   * If feed is not updated, return empty list and do nothing
+   * 
+   * @param feed
+   * @return new Articles of feed
+   * @throws InvalidFeedException
+   */
+  public List<Article> fetchLatestArticles(Feed feed) throws InvalidFeedException {
   	List<Article> articles = new ArrayList<Article>();
   	File xmlFile = null;
   	try {
@@ -266,41 +274,68 @@ public class RSSFeedParser extends FeedParser {
   	  
   	  if (channelNode.getNodeType() == Node.ELEMENT_NODE) {
   	  	Element elem = (Element) channelNode;
-				
-				NodeList items = elem.getElementsByTagName("item");
-				for(int index = 0; index < items.getLength(); index++) {
-					Element itemElem = (Element) items.item(index);
-					
-					// <description> exists both in 0.91, 0.92, 2.0
-					description = DOMUtil.getElementContent(itemElem, "description");
 
-					// <title> & <link> exists in 0.91, 2.0
-					title = DOMUtil.getElementContent(itemElem, "title");
-					link = DOMUtil.getElementContent(itemElem, "link");
-					
-					// compatible with RSS 0.92
-					if (version.equals("0.92")) {
-						// Implement <source>, <enclosure> and <category>
-						if (DOMUtil.subElementExists(itemElem, "source")) {
-							title = DOMUtil.getElementContent(itemElem, "source");
-							Element sourceElem = (Element) elem.getElementsByTagName("source").item(0);
-							link = sourceElem.getAttribute("url");
-						} else if (DOMUtil.subElementExists(itemElem, "enclosure")) {
-							Element enclosureElem = (Element) elem.getElementsByTagName("enclosure").item(0);
-							link = enclosureElem.getAttribute("url");
-						} else if (DOMUtil.subElementExists(itemElem, "category")) {
-							Element categoryElem = (Element) elem.getElementsByTagName("category").item(0);
-							link = categoryElem.getAttribute("domain");
-						}
-					}
+    		// check whether feed is updated, jump out if not.
+  	  	pubDate = DOMUtil.getElementContent(elem, "pubDate");
+  	  	if (pubDate == null) {
+  	  		pubDate = DOMUtil.getElementContent(elem, "lastBuildDate");
+  	  	}
+  	  	System.out.println(feed.getPubDate());
+  	  	System.out.println(pubDate);
+  	  	
+  	  	if (pubDate.equals(feed.getPubDate())) { // check value equality via .equals()
+  	  		System.out.println("pubDate equals");
+  	  		return articles;
+  	  	}
+  	  	else {
+  	  		feed.setPubDate(pubDate);
+  	  		System.out.println("pubDate not equal");
+  	  		
+  	  		NodeList items = elem.getElementsByTagName("item");
+  				for(int index = 0; index < items.getLength(); index++) {
+  					Element itemElem = (Element) items.item(index);
+  					
+  					// <description> exists both in 0.91, 0.92, 2.0
+  					description = DOMUtil.getElementContent(itemElem, "description");
 
-					author = DOMUtil.getElementContent(itemElem, "author");
-					pubDate = DOMUtil.getElementContent(itemElem, "pubDate");
-					guid = DOMUtil.getElementContent(itemElem, "guid");
-					Article article = new Article(null, author, description, guid,
-							link, title, pubDate);
-					articles.add(article);
-				}
+  					// <title> & <link> exists in 0.91, 2.0
+  					title = DOMUtil.getElementContent(itemElem, "title");
+  					link = DOMUtil.getElementContent(itemElem, "link");
+  					
+  					System.out.println("version: " + version);
+  					
+  					// compatible with RSS 0.92
+  					if (version.equals("0.92")) {
+  						// Implement <source>, <enclosure> and <category>
+  						if (DOMUtil.subElementExists(itemElem, "source")) {
+  							title = DOMUtil.getElementContent(itemElem, "source");
+  							Element sourceElem = (Element) elem.getElementsByTagName("source").item(0);
+  							link = sourceElem.getAttribute("url");
+  						} else if (DOMUtil.subElementExists(itemElem, "enclosure")) {
+  							Element enclosureElem = (Element) elem.getElementsByTagName("enclosure").item(0);
+  							link = enclosureElem.getAttribute("url");
+  						} else if (DOMUtil.subElementExists(itemElem, "category")) {
+  							Element categoryElem = (Element) elem.getElementsByTagName("category").item(0);
+  							link = categoryElem.getAttribute("domain");
+  						}
+  					}
+
+  					author = DOMUtil.getElementContent(itemElem, "author");
+  					pubDate = DOMUtil.getElementContent(itemElem, "pubDate");
+  					guid = DOMUtil.getElementContent(itemElem, "guid");
+  					
+  					// create Article
+  					Article article = new Article(feed, author, description, guid,
+  							link, title, pubDate);
+  					
+  					// avoid duplicate articles
+  					if (!feed.getArticles().contains(article)) {
+  						System.out.println("ADD ARTICLE");
+  						articles.add(article);
+  						feed.getArticles().add(article);
+  					}
+  				}
+  	  	}
   	  }
   	} catch (InvalidFeedException e) {
   		InvalidFeedException exception = new InvalidRSSFeedException(e.getMessage());
@@ -318,6 +353,9 @@ public class RSSFeedParser extends FeedParser {
   	} finally {
   	  cleanFile(xmlFile);
   	}
+  	
+  	feed.save(); // update feed
+  	System.out.println(feed.getArticles().size());
 	  return articles;
   }
   

@@ -12,8 +12,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Article;
 import models.Feed;
 import lib.exceptions.InvalidFeedException;
+import lib.exceptions.RefreshFeedException;
 import lib.util.*;
 import play.*;
+import play.api.libs.iteratee.internal;
 import play.libs.Json;
 import play.mvc.*;
 
@@ -120,25 +122,56 @@ public class FeedsController extends Controller {
   public static Result refresh(Long id) {
   	try {
   		Feed feed = Feed.findById(id);
-  		RSSFeedParser parser = new RSSFeedParser(feed.getSourceURL());
-  		parser.writeFeed2File();
-  		List<Article> articles = parser.getArticles();
-  		List<Article> newArticles = new ArrayList<Article>();
-  		for(Article article : articles) {
-  		  Boolean flag = feed.getArticles().add(article);
-  		  if (flag) {
-  		  	newArticles.add(article);
-  		  }
-  		}
-  		feed.save();
+  		List<Map<String, Object>> newArticles = fetchNewArticles(feed);
+  		
   		JsonNode json = Json.toJson(newArticles);
     	return ok(json);
   	} catch (EntityNotFoundException e) {
+  		e.printStackTrace();
   		return notFound(buildErrorInfo("not found"));
+  	} catch (RefreshFeedException e) {
+  		e.printStackTrace();
+  		return internalServerError(buildErrorInfo("refresh failed"));
   	} catch (Exception e) {
   		e.printStackTrace();
     	return internalServerError(buildErrorInfo("internal error"));
   	}
+  }
+  
+	@BodyParser.Of(BodyParser.Json.class)
+  public static Result refreshAll() {
+		System.out.println("refreshAll");
+		List results = new ArrayList();
+		
+		try {
+			JsonNode jsonParams = request().body().asJson();
+			if (jsonParams.findPath("ids").isArray()) {
+				Iterator<JsonNode> iter = jsonParams.findPath("ids").iterator();
+				
+				// fetch new articles & add to result
+				while (iter.hasNext()) {
+					Long id = iter.next().asLong();
+					Feed feed = Feed.findById(id);
+					Map<String, Object> item = new HashMap<String, Object>();
+					item.put("feed_id", id);
+					item.put("articles",fetchNewArticles(feed));
+					//System.out.println("OK");
+					results.add(item);
+				}
+				
+		  	JsonNode json = Json.toJson(results);
+		  	return ok(json);
+			}
+			else {
+				return internalServerError(buildErrorInfo("something fuck up"));
+			}
+		} catch (RefreshFeedException e) {
+			e.printStackTrace();
+			return internalServerError(buildErrorInfo("refresh failed"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ok();
+		}
   }
   
   /**
@@ -161,6 +194,34 @@ public class FeedsController extends Controller {
   		e.printStackTrace();
   		return internalServerError(buildErrorInfo("internal error"));
   	}
+  }
+  
+  /**
+   * Fetch latest articles of feed
+   * 
+   * @param feed
+   * @return new articles
+   * @throws RefreshFeedException
+   */
+  private static List<Map<String, Object>> fetchNewArticles(Feed feed) throws RefreshFeedException {
+		List<Map<String, Object>> newArticles = new ArrayList<Map<String, Object>>();
+		FeedParserFactory factory = FeedParserFactory.newInstance();
+  	try {
+  		
+  		FeedParser parser = factory.createFeedParser(feed.getSourceURL());
+  		parser.writeFeed2File();
+  		List<Article> articles = parser.fetchLatestArticles(feed);
+
+  		for(Article article : articles) {
+  		 	newArticles.add(article.getData());
+  		}
+  	} catch (Exception e) {
+  		e.printStackTrace();
+  		RefreshFeedException ex = new RefreshFeedException();
+  		ex.initCause(e);
+  		throw ex;
+  	}
+		return newArticles;
   }
   
   private static ObjectNode buildErrorInfo(String msg) {

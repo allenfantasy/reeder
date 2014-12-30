@@ -205,13 +205,15 @@ public class AtomFeedParser extends FeedParser {
   	return feed;
   }
   
-  public List<Article> getArticles() throws InvalidFeedException {
+  public List<Article> fetchLatestArticles(Feed feed) throws InvalidFeedException {
   	List<Article> articles = new ArrayList<Article>();
   	File xmlFile = null;
   	try {
   		String filePath = writeFeed2File(); // throws InvalidAtomFeedException
   		
   		String author = null;    		// <author> -> <name>
+  		String pubDate;
+  		
   		xmlFile = new File(filePath);
   		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
   		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -221,58 +223,80 @@ public class AtomFeedParser extends FeedParser {
   		doc.getDocumentElement().normalize();
   		
   		Node atomNode = doc.getElementsByTagName("feed").item(0);
+  		
   		if (atomNode.getNodeType() == Node.ELEMENT_NODE) {
   			Element elem = (Element) atomNode;
-  			// get <author> => <name>
-  			Element authorElem = (Element) elem.getElementsByTagName("author").item(0);
-  			author = DOMUtil.getElementContent(authorElem, "name");
-  			NodeList items = elem.getElementsByTagName("entry");
-  			for(int index = 0; index < items.getLength(); index++) {
-  				Element itemElem = (Element) items.item(index);
-  				String itemDesc;  		       // check "GETTING DESCRIPTION"
-  				String itemTitle;            // <title>
-  				String itemLink = null;      // check "GETTING LINK"
-  				String itemAuthor;           // <author> => <name>
-  				String itemPubDate;          // <updated>
-  				String itemGuid;             // <id>
+  			
+  			// check whether feed is updated, jump out if out.
+  			pubDate = DOMUtil.getElementContent(elem, "updated");
+  	  	System.out.println(feed.getPubDate());
+  	  	System.out.println(pubDate);
+  	  	
+  			if (pubDate.equals(feed.getPubDate())) {
+  				System.out.println("pubDate equals");
+  				return articles;
+  			}
+  			else {
+  				System.out.println("pubDate not equal");
+  				feed.setPubDate(pubDate);
   				
-  				// GETTTING DESCRIPTION
-  				itemDesc = DOMUtil.getElementContent(itemElem, "content");
-  				if (itemDesc == null || itemDesc.equals("")) {
-  					itemDesc = DOMUtil.getElementContent(itemElem, "summary");
-  				}
-  				
-  				// GETTING LINK
-  				Node contentNode = itemElem.getElementsByTagName("content").item(0);
-  				if (contentNode != null) {
-  					String contentSrc = ((Element)contentNode).getAttribute("src");
-  					if (contentSrc != null && !contentSrc.equals("")) {
-  						itemLink = contentSrc;
-  					}
-  				}
-  				if (itemLink == null) {
-  					Node itemLinkNode = itemElem.getElementsByTagName("link").item(0);
-  					String itemLinkHref = ((Element)itemLinkNode).getAttribute("href");
-  					if (itemLinkHref != null && !itemLinkHref.equals("")) {
-  						itemLink = itemLinkHref;
-  					}
-  				}
-  				// GETTING AUTHOR
-  				if (DOMUtil.subElementExists(itemElem, "author")) {
-  					Element itemAuthorElem = (Element) itemElem.getElementsByTagName("author").item(0);
-  					itemAuthor = DOMUtil.getElementContent(itemAuthorElem, "name");
-  				} else {
-  					itemAuthor = author;
-  				}
-  				
-  				itemTitle = DOMUtil.getElementContent(itemElem, "title");
-  				itemPubDate = DOMUtil.getElementContent(itemElem, "updated");
-  				itemGuid = DOMUtil.getElementContent(itemElem, "id");
-  				
-  				// create article
-  				Article article = new Article(null, itemAuthor, itemDesc, itemGuid,
-  						itemLink, itemTitle, itemPubDate);
-  				articles.add(article);
+  				// get <author> => <name>
+    			Element authorElem = (Element) elem.getElementsByTagName("author").item(0);
+    			author = DOMUtil.getElementContent(authorElem, "name");
+    			NodeList items = elem.getElementsByTagName("entry");
+    			for(int index = 0; index < items.getLength(); index++) {
+    				Element itemElem = (Element) items.item(index);
+    				String itemDesc;  		       // check "GETTING DESCRIPTION"
+    				String itemTitle;            // <title>
+    				String itemLink = null;      // check "GETTING LINK"
+    				String itemAuthor;           // <author> => <name>
+    				String itemPubDate;          // <updated>
+    				String itemGuid;             // <id>
+    				
+    				// GETTTING DESCRIPTION
+    				itemDesc = DOMUtil.getElementContent(itemElem, "content");
+    				if (itemDesc == null || itemDesc.equals("")) {
+    					itemDesc = DOMUtil.getElementContent(itemElem, "summary");
+    				}
+    				
+    				// GETTING LINK
+    				Node contentNode = itemElem.getElementsByTagName("content").item(0);
+    				if (contentNode != null) {
+    					String contentSrc = ((Element)contentNode).getAttribute("src");
+    					if (contentSrc != null && !contentSrc.equals("")) {
+    						itemLink = contentSrc;
+    					}
+    				}
+    				if (itemLink == null) {
+    					Node itemLinkNode = itemElem.getElementsByTagName("link").item(0);
+    					String itemLinkHref = ((Element)itemLinkNode).getAttribute("href");
+    					if (itemLinkHref != null && !itemLinkHref.equals("")) {
+    						itemLink = itemLinkHref;
+    					}
+    				}
+    				// GETTING AUTHOR
+    				if (DOMUtil.subElementExists(itemElem, "author")) {
+    					Element itemAuthorElem = (Element) itemElem.getElementsByTagName("author").item(0);
+    					itemAuthor = DOMUtil.getElementContent(itemAuthorElem, "name");
+    				} else {
+    					itemAuthor = author;
+    				}
+    				
+    				itemTitle = DOMUtil.getElementContent(itemElem, "title");
+    				itemPubDate = DOMUtil.getElementContent(itemElem, "updated");
+    				itemGuid = DOMUtil.getElementContent(itemElem, "id");
+    				
+    				// create Article
+    				Article article = new Article(feed, itemAuthor, itemDesc, itemGuid,
+    						itemLink, itemTitle, itemPubDate);
+    				
+    				// avoid duplicate articles
+    				if (!feed.getArticles().contains(article)) {
+    					System.out.println("ADD ARTICLE");
+    					articles.add(article);
+    					feed.getArticles().add(article);
+    				}
+    			}
   			}
   		}
   	} catch (InvalidFeedException e) {
@@ -287,6 +311,9 @@ public class AtomFeedParser extends FeedParser {
   	} finally {
   		cleanFile(xmlFile);
   	}
+  	
+  	feed.save(); // update feed
+  	
   	return articles;
   }
   

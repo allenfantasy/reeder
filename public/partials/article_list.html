@@ -1,6 +1,6 @@
 <div id="no-feed" ng-if="articles.length == 0" resize ng-style="listResizeWithOffset()"></div>
 <div ng-if="articles.length != 0">
-  <div class="article-list" ng-repeat="article in articles">
+  <div class="article-list" ng-repeat="article in articles | orderBy:pubDate:true">
     <article class="{{ article.readed ? 'readed' : '' }}" ng-click="setArticle(article)">
       <div class="icon">
       </div>

@@ -19,9 +19,11 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
       { name: "category", text: "分类" }
     ];
     $scope.selectedFeed = null;
+    $scope.isRefreshing = false;
 
     Feed.all(function(feeds) {
       $scope.feeds = feeds;
+      console.log(feeds);
     });
 
     $scope.setFeed = function(feed) {
@@ -34,6 +36,12 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
     $scope.isActiveItem = function(feed) {
       return feed.id + '' === $stateParams.id;
     };
+
+    $scope.unreadNum = function(feed) {
+      return feed.articles.filter(function(article) {
+        return !article.readed;
+      }).length;
+    }
 
     $scope.addTooltipActive = false;
 
@@ -76,8 +84,6 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
         console.log("no id or title");
         return;
       }
-      //console.log(id);
-      //console.log(title);
       $scope.hideUpdateForm();
       Feed.updateFeedTitle(id, title,
         function(data, status, headers, config) {
@@ -102,8 +108,18 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
       if (event.keyCode === 13) {
         console.log("it's a Enter. check the url please");
         if (Feed.validateURL(url)) {
+          //  TODO should add some loading tips
           console.log("valid url. Ready to create Feed");
-          Feed.create(url, fetchSuccessCallback, fetchErrorCallback);
+          Feed.create(url,
+            function(data, status, headers, config) {
+              console.log("create feed success");
+              console.log(data);
+              Feed.addFeed(data);
+            },
+            function(data, status, headers, config) {
+              console.log("create feed error");
+              console.log(data);
+            });
         } else {
           // TODO: pop up warning.
           console.log("invalid url....");
@@ -111,20 +127,33 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
       }
     };
 
-    function fetchSuccessCallback(data, status, headers, config) {
-      //  TODO should add some loading tips
-      console.log(data);
-      console.log(status);
-      console.log(headers);
-      console.log(config);
-      Feed.addFeed(data);
-    }
-
-    function fetchErrorCallback(data, status, headers, config) {
-      console.log(data);
-      console.log(status);
-      console.log(headers);
-      console.log(config);
+    /**
+     * Refresh all feeds
+     * All ! All feeds !
+     */
+    $scope.refresh = function() {
+      $scope.isRefreshing = true;
+      // provide an array of feed ids
+      var ids = $scope.feeds.map(function(feed) {
+        return feed.id;
+      });
+      Feed.refresh(ids,
+        function(data, status, headers, config) {
+          console.log("refresh success");
+          $scope.isRefreshing = false;
+          console.log(data);
+          // [ { feed_id: xx1, articles: yy1 }, { feed_id: xx2, articles: yy2 }]
+          data.forEach(function(d) {
+            Feed.addArticles(d.feed_id, d.articles);
+          });
+        },
+        function(data, status, headers, config) {
+          console.log("refresh failed");
+          $scope.isRefreshing = false;
+          console.log(data);
+          // TODO
+        }
+      );
     }
   }
 ]);
@@ -145,6 +174,10 @@ feedControllers.controller("listController", ["$scope", "$state", "$stateParams"
       // 修改路由
       $state.go("article", { id: $scope.feed.id, title: article.title })
     };
+
+    $scope.pubDate = function(article) {
+      return new Date(article.pub_date);
+    }
   }
 ]);
 

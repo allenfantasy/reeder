@@ -184,6 +184,7 @@ header {
 }
 #feed-list .dr-label {
   font-weight: bold;
+  padding-left: 20px;
 }
 #feed-list .dr-label.all-readed {
   font-weight: normal;
@@ -193,6 +194,13 @@ header {
   border-top-color: #e7e7e7;
   border-bottom-color: #f0f0f0;
   cursor: pointer;
+}
+.dr-label .icon {
+  width: 25px;
+  display: inline-block;
+}
+.dr-label .icon img {
+  height: 1.5em;
 }
 .dr-label .update-title {
   width: 24px;
@@ -227,25 +235,37 @@ header {
   }
   #view-add .add-btn {
     border-right: 1px solid #e0e0e0;
-    width: 120px;
+    width: 130px;
     height: 65px;
+    float: left;
   }
-    /* Add button */
-    .add-btn .add-btn-label {
-      width: 120px;
+  #view-add .refresh-btn {
+    width: 128px;
+    height: 65px;
+    float: left;
+  }
+    /* Add button & Refresh button */
+    .add-btn .add-btn-label,
+    .refresh-btn .refresh-btn-label {
+      width: 130px;
       height: 65px;
       position: relative;
       cursor: pointer;
     }
-    .add-btn .add-btn-label .label-inner {
+    .add-btn .add-btn-label .label-inner,
+    .refresh-btn .refresh-btn-label .label-inner {
       color: #7a7a7a;
       font-size: 1.1125em;
       font-weight: bold;
       position: absolute;
       top: 15px;
-      left: 30px;
+      left: 35px;
     }
-    .add-btn .add-btn-label .label-inner:before {
+    .refresh-btn .refresh-btn-label .label-inner {
+      left: 20px;
+    }
+    .add-btn .add-btn-label .label-inner:before,
+    .refresh-btn .refresh-btn-label .label-inner:before {
       content: '';
       display: inline-block;
       position: relative;
@@ -255,7 +275,22 @@ header {
       width: 24px;
       height: 24px;
       background-size: 24px 24px;
+    }
+    .add-btn .add-btn-label .label-inner:before {
       background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAAc0lEQVQ4Ec1Ruw4AIQiTyy18MasrX83pQgox5hIZdLIQmj7IzNrpe04J5n0JyYtKiAhhExH3qqphiTEEksAwADPn0RKX2CkhCXYwg6x7sfOMAskug92uxA5hVbni3rtXPP4uf1rFuxIl95CETHKtf/E9dj545hw56YKVPAAAAABJRU5ErkJggg==");
+    }
+
+    @-webkit-keyframes rotating {
+      from { -webkit-transform: rotate(0deg); }
+      to { -webkit-transform: rotate(360deg); }
+    }
+
+    .refresh-btn .refresh-btn-label .label-inner:before {
+      background: #7a7a7a;
+      -webkit-mask-image: url("/images/refresh.svg");
+    }
+    .refresh-btn .refresh-btn-label .label-inner.rotating:before {
+      -webkit-animation: rotating 1s linear infinite;
     }
 
     /* Tooltip section */

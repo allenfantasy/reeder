@@ -16,10 +16,10 @@ import models.Article;
 abstract public class FeedParser {
 	// interfaces
   public abstract Feed readFeed() throws IOException, InvalidFeedException;
-  public abstract List<Article> getArticles() throws InvalidFeedException;
+  public abstract List<Article> fetchLatestArticles(Feed feed) throws InvalidFeedException;
   public abstract String getSourceURL();
-  
-  protected abstract String writeFeed2File() throws InvalidFeedException;
+  public abstract String writeFeed2File() throws InvalidFeedException;
+
   protected abstract void cleanFile(File f);
   protected abstract String getFeedType();
 

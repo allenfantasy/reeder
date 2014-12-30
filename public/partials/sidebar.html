@@ -13,7 +13,8 @@
       <ul id="feed-list" class="dr-list">
         <li class="dr-list-item" ng-class="{active: isActiveItem(feed)}" ng-repeat="feed in feeds">
           <div class="dr-label" ng-class="{'all-readed': feed.allReaded}" ng-click="setFeed(feed)">
-            {{ feed.title }}
+            <span class="icon"><img ng-src="{{feed.link}}favicon.ico"></span>
+            <span>{{ feed.title }} ({{ unreadNum(feed) }})</span>
             <span class="update-title" ng-click="showUpdateForm(feed, $event)"></span>
           </div>
         </li>
@@ -36,6 +37,11 @@
             </form>
           </li>
         </ul>
+      </div>
+    </div>
+    <div class="refresh-btn">
+      <div class="refresh-btn-label" ng-click="refresh()">
+        <div class="label-inner" ng-class="{rotating: isRefreshing}">Refresh</div>
       </div>
     </div>
   </div>
