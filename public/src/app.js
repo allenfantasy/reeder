@@ -46,4 +46,16 @@ rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
       url: "/feed/:id/article/:title",
       views: viewsMap
     })
+    .state("today", {
+      url: "/today",
+      views: viewsMap
+    })
+    .state("star", {
+      url: "/star",
+      views: viewsMap
+    })
+    .state("all", {
+      url: "/all",
+      views: viewsMap
+    })
 });

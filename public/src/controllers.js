@@ -16,7 +16,7 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
       { name: "today", text: "今日内容" },
       { name: "star", text: "星标内容" },
       { name: "all", text: "全部" },
-      { name: "category", text: "分类" }
+      //{ name: "category", text: "分类" } // TODO
     ];
     $scope.selectedFeed = null;
     $scope.isRefreshing = false;
@@ -25,6 +25,26 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
       $scope.feeds = feeds;
       console.log(feeds);
     });
+
+    $scope.fn = {
+      actions: {
+        today: function() {
+          console.log("today");
+          Feed.setToday();
+          $state.go("today");
+        },
+        star: function() {
+          console.log("star");
+          Feed.setAllStarred();
+          $state.go("star");
+        },
+        all: function() {
+          console.log("all");
+          Feed.setAll();
+          $state.go("all");
+        }
+      }
+    };
 
     $scope.setFeed = function(feed) {
       Feed.setFeed(feed);

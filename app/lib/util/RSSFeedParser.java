@@ -302,8 +302,6 @@ public class RSSFeedParser extends FeedParser {
   					title = DOMUtil.getElementContent(itemElem, "title");
   					link = DOMUtil.getElementContent(itemElem, "link");
   					
-  					System.out.println("version: " + version);
-  					
   					// compatible with RSS 0.92
   					if (version.equals("0.92")) {
   						// Implement <source>, <enclosure> and <category>

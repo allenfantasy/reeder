@@ -40,6 +40,43 @@ feedService.factory('Feed',["$http", "$rootScope", function($http, $rootScope) {
         }
       }
     },
+    /**
+     * put all articles into list
+     */
+    setAll: function() {
+      this.feed = undefined;
+      this.articles = this.feeds.reduce(function(prev, feed) {
+        return prev.concat(feed.articles);
+      },[]);
+    },
+    /**
+     * put all starred articles into list
+     */
+    setAllStarred: function() {
+      this.feed = undefined;
+      this.articles = this.feeds.reduce(function(prev, feed) {
+        return prev.concat(feed.articles.filter(function(article) {
+          return article.starred;
+        }));
+      }, []);
+    },
+
+    setToday: function() {
+      this.feed = undefined;
+      this.articles = this.feeds.reduce(function(prev, feed) {
+        return prev.concat(feed.articles.filter(function(article) {
+          var date = new Date(article.pub_date);
+          var today = new Date(article.pub_date);
+          today.setHours(0); today.setMinutes(0); today.setSeconds(0);
+
+          var tomorrow = new Date(article.pub_date);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          tomorrow.setHours(0); tomorrow.setMinutes(0); tomorrow.setSeconds(0);
+
+          return today < date && date < tomorrow;
+        }));
+      }, []);
+    },
 
     all: function(cb) {
       var self = this;
