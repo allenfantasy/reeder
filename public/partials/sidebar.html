@@ -2,7 +2,7 @@
   <div>
 
     <ul id="dr-persistent-nav" class="dr-list dr-persistent-nav">
-      <li class="dr-list-item nav-{{ action.name }}" id="nav-{{ action.name }}" ng-repeat="action in actions">
+      <li class="dr-list-item nav-{{ action.name }}" ng-class="{active: fn.actions.isActive(action.name)}" id="nav-{{ action.name }}" ng-repeat="action in actions">
         <div class="dr-label" ng-click="fn.actions[action.name]()">
           <span>{{ action.text }}</span>
         </div>
@@ -11,11 +11,11 @@
 
     <div id="subscription-list">
       <ul id="feed-list" class="dr-list">
-        <li class="dr-list-item" ng-class="{active: isActiveItem(feed)}" ng-repeat="feed in feeds">
-          <div class="dr-label" ng-class="{'all-readed': feed.allReaded}" ng-click="setFeed(feed)">
+        <li class="dr-list-item" ng-class="{active: fn.feed.isActive(feed)}" ng-repeat="feed in feeds">
+          <div class="dr-label" ng-class="{'all-readed': feed.allReaded}" ng-click="fn.feed.set(feed)">
             <span class="icon"><img ng-src="{{feed.link}}favicon.ico"></span>
-            <span>{{ feed.title }} ({{ unreadNum(feed) }})</span>
-            <span class="update-title" ng-click="showUpdateForm(feed, $event)"></span>
+            <span>{{ feed.title }} ({{ fn.feed.unreadNum(feed) }})</span>
+            <span class="update-title" ng-click="fn.updateForm.show(feed, $event)"></span>
           </div>
         </li>
       </ul>
@@ -26,13 +26,13 @@
 <div id="view-add" class="view-add">
   <div>
     <div class="add-btn">
-      <div class="add-btn-label" hide-add-tooltip="hideAddTooltip()" ng-click="showAddTooltip()">
+      <div class="add-btn-label" hide-add-tooltip="fn.addTooltip.hide()" ng-click="fn.addTooltip.show()">
         <div class="label-inner">Add</div>
       </div>
-      <div class="tooltip-add" hide-add-tooltip="hideAddTooltip()" ng-show="addTooltipActive">
+      <div class="tooltip-add" hide-add-tooltip="fn.addTooltip.hide()" ng-show="addTooltipActive">
         <ul class="tooltip-list">
           <li class="tooltip-list-item tooltip-input">
-            <form id="feed-add-form" ng-keydown="tryCreateFeed($event)">
+            <form id="feed-add-form" ng-keydown="fn.feed.create($event)">
               <input type="text" id="feed-add-form-input" placeholder="请输入订阅地址" autocomplete="off">
             </form>
           </li>
@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="refresh-btn">
-      <div class="refresh-btn-label" ng-click="refresh()">
+      <div class="refresh-btn-label" ng-click="fn.feed.refresh()">
         <div class="label-inner" ng-class="{rotating: isRefreshing}">Refresh</div>
       </div>
     </div>

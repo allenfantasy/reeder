@@ -1,8 +1,8 @@
-<div class="backdrop" ng-click="hideUpdateForm()"></div>
+<div class="backdrop" ng-click="fn.updateForm.hide()"></div>
 <div class="content">
   <div class="label">Update feed's title</div>
   <div class="form">
-    <form name="titleForm" ng-submit="submitUpdateForm()">
+    <form name="titleForm" ng-submit="fn.updateForm.submit()">
       <input ng-model="selectedFeed.title" required name="title" type="text" autocomplete="off">
       <span ng-show="titleForm.title.$error.required">Title cannot be blank</span>
       <input type="submit" value="Update">

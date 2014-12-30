@@ -2,7 +2,23 @@
 
 var feedService = angular.module('feedService', []);
 
-feedService.factory('Feed',["$http", "$rootScope", function($http, $rootScope) {
+var todayFilter = function(article) {
+  var date = new Date(article.pub_date);
+  var today = new Date(article.pub_date);
+  today.setHours(0); today.setMinutes(0); today.setSeconds(0);
+
+  var tomorrow = new Date(article.pub_date);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0); tomorrow.setMinutes(0); tomorrow.setSeconds(0);
+
+  return today < date && date < tomorrow;
+};
+var starredFilter = function(article) {
+  return article.starred;
+};
+
+
+feedService.factory('Feed',["$http", "$rootScope", "$state", function($http, $rootScope, $state) {
   return {
     // datas
     feeds: [],
@@ -36,7 +52,18 @@ feedService.factory('Feed',["$http", "$rootScope", function($http, $rootScope) {
       for(var i = 0; i < this.feeds.length; i++) {
         if (this.feeds[i].id == feedId) {
           this.feeds[i].articles = this.feeds[i].articles.concat(articles);
-          break;
+
+          // update list section by emitting events
+          var state = $state.$current.name;
+          if ((state == "feed" || state == "article") && this.feed.id == feedId) {
+            $rootScope.$emit("addArticles", articles);
+          } else if (state == "today") {
+            $rootScope.$emit("addArticles", articles.filter(todayFilter));
+          } else if (state == "star") {
+            $rootScope.$emit("addArticles", articles.filter(starredFilter));
+          } else if (state == "all") {
+            $rootScope.$emit("addArticles", articles);
+          }
         }
       }
     },
@@ -55,26 +82,14 @@ feedService.factory('Feed',["$http", "$rootScope", function($http, $rootScope) {
     setAllStarred: function() {
       this.feed = undefined;
       this.articles = this.feeds.reduce(function(prev, feed) {
-        return prev.concat(feed.articles.filter(function(article) {
-          return article.starred;
-        }));
+        return prev.concat(feed.articles.filter(starredFilter));
       }, []);
     },
 
     setToday: function() {
       this.feed = undefined;
       this.articles = this.feeds.reduce(function(prev, feed) {
-        return prev.concat(feed.articles.filter(function(article) {
-          var date = new Date(article.pub_date);
-          var today = new Date(article.pub_date);
-          today.setHours(0); today.setMinutes(0); today.setSeconds(0);
-
-          var tomorrow = new Date(article.pub_date);
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          tomorrow.setHours(0); tomorrow.setMinutes(0); tomorrow.setSeconds(0);
-
-          return today < date && date < tomorrow;
-        }));
+        return prev.concat(feed.articles.filter(todayFilter));
       }, []);
     },
 

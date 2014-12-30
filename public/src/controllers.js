@@ -20,6 +20,7 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
     ];
     $scope.selectedFeed = null;
     $scope.isRefreshing = false;
+    $scope.addTooltipActive = false;
 
     Feed.all(function(feeds) {
       $scope.feeds = feeds;
@@ -42,139 +43,130 @@ feedControllers.controller("sidebarController", ["$scope", "$window", "$state", 
           console.log("all");
           Feed.setAll();
           $state.go("all");
-        }
-      }
-    };
-
-    $scope.setFeed = function(feed) {
-      Feed.setFeed(feed);
-      Feed.setArticle(undefined); // clear article-detail section
-      $scope.t = feed.title;
-      $state.go("feed", { id: feed.id });
-    };
-
-    $scope.isActiveItem = function(feed) {
-      return feed.id + '' === $stateParams.id;
-    };
-
-    $scope.unreadNum = function(feed) {
-      return feed.articles.filter(function(article) {
-        return !article.readed;
-      }).length;
-    }
-
-    $scope.addTooltipActive = false;
-
-    $scope.showAddTooltip = function() {
-      $scope.addTooltipActive = true;
-    };
-
-    $scope.hideAddTooltip = function() {
-      $scope.addTooltipActive = false;
-    };
-
-    $scope.showUpdateForm = function(feed, $event) {
-      console.log("show form");
-
-      // prevent event bubbling.
-      if ($event.stopPropagation) $event.stopPropagation();
-
-      // compatible with IE 8+
-      if ($event.preventDefault) $event.preventDefault();
-      $event.cancelBubble = true;
-      $event.returnValue = false;
-
-      $scope.selectedFeed = feed;
-    };
-
-    $scope.hideUpdateForm = function() {
-      $scope.selectedFeed = null;
-    }
-
-    $scope.submitUpdateForm = function() {
-      if (!$scope.selectedFeed ) {
-        // TODO: popup some error tips
-        console.log("no selected Feed");
-        return;
-      }
-      var id = $scope.selectedFeed.id;
-      var title = $scope.selectedFeed.title;
-      if (!id || !title ) {
-        // TODO: popup some error tips
-        console.log("no id or title");
-        return;
-      }
-      $scope.hideUpdateForm();
-      Feed.updateFeedTitle(id, title,
-        function(data, status, headers, config) {
-          console.log('update feed title success');
-          console.log(data);
         },
-        function(data, status, headers, config) {
-          console.log('update feed title error');
-          console.log(data);
-        });
-    }
+        isActive: function(name) {
+          return $state.$current.name == name;
+        }
+      },
+      addTooltip: {
+        show: function() {
+          $scope.addTooltipActive = true;
+        },
+        hide: function() {
+          $scope.addTooltipActive = false;
+        }
+      },
+      updateForm: {
+        show: function(feed, $event) {
+          console.log("show form");
 
-    /**
-     * Create a feed is input url is valid
-     *
-     * 1. check if the key pressed is 'Enter'
-     * 2. check if the current link is a valid URL
-     * 3. sent POST request to create a new Feed
-     */
-    $scope.tryCreateFeed = function(event) {
-      var url = event.target.value;
-      if (event.keyCode === 13) {
-        console.log("it's a Enter. check the url please");
-        if (Feed.validateURL(url)) {
-          //  TODO should add some loading tips
-          console.log("valid url. Ready to create Feed");
-          Feed.create(url,
+          // prevent event bubbling.
+          if ($event.stopPropagation) $event.stopPropagation();
+
+          // compatible with IE 8+
+          if ($event.preventDefault) $event.preventDefault();
+          $event.cancelBubble = true;
+          $event.returnValue = false;
+
+          $scope.selectedFeed = feed;
+        },
+        hide: function() {
+          $scope.selectedFeed = null;
+        },
+        submit: function() {
+          if (!$scope.selectedFeed ) {
+            // TODO: popup some error tips
+            console.log("no selected Feed");
+            return;
+          }
+          var id = $scope.selectedFeed.id;
+          var title = $scope.selectedFeed.title;
+          if (!id || !title ) {
+            // TODO: popup some error tips
+            console.log("no id or title");
+            return;
+          }
+          $scope.hideUpdateForm();
+          Feed.updateFeedTitle(id, title,
             function(data, status, headers, config) {
-              console.log("create feed success");
+              console.log('update feed title success');
               console.log(data);
-              Feed.addFeed(data);
             },
             function(data, status, headers, config) {
-              console.log("create feed error");
+              console.log('update feed title error');
               console.log(data);
             });
-        } else {
-          // TODO: pop up warning.
-          console.log("invalid url....");
+          }
+      },
+      feed: {
+        create: function($event) {
+          var url = event.target.value;
+          if (event.keyCode === 13) {
+            console.log("it's a Enter. check the url please");
+            if (Feed.validateURL(url)) {
+              //  TODO should add some loading tips
+              console.log("valid url. Ready to create Feed");
+              Feed.create(url,
+                function(data, status, headers, config) {
+                  console.log('update feed title success');
+                  console.log(data);
+                  Feed.addFeed(data);
+                },
+                function(data, status, headers, config) {
+                  console.log('update feed title error');
+                  console.log(data);
+                });
+            }
+          } else {
+            // TODO popup warning
+            console.log("invalid url!");
+          }
+        },
+        set: function(feed) {
+          Feed.setFeed(feed);
+          Feed.setArticle(undefined); // clear article-detail section
+          //$scope.t = feed.title;
+          $state.go("feed", { id: feed.id });
+        },
+        /**
+        * Refresh all feeds
+        * All ! All feeds !
+        */
+        refresh: function() {
+          $scope.isRefreshing = true;
+          // provide an array of feed ids
+          var ids = $scope.feeds.map(function(feed) {
+            return feed.id;
+          });
+          Feed.refresh(ids,
+            function(data, status, headers, config) {
+              console.log("refresh success");
+              $scope.isRefreshing = false;
+              console.log(data);
+              //console.log($state.$current.name);
+              // [ { feed_id: xx1, articles: yy1 }, { feed_id: xx2, articles: yy2 }]
+              data.forEach(function(d) {
+                Feed.addArticles(d.feed_id, d.articles);
+              });
+            },
+            function(data, status, headers, config) {
+              console.log("refresh failed");
+              $scope.isRefreshing = false;
+              console.log(data);
+              // TODO
+            }
+          );
+        },
+        isActive: function(feed) {
+          return feed.id + '' === $stateParams.id;
+        },
+        unreadNum: function(feed) {
+          return feed.articles.filter(function(article) {
+            return !article.readed;
+          }).length;
         }
       }
     };
-
-    /**
-     * Refresh all feeds
-     * All ! All feeds !
-     */
-    $scope.refresh = function() {
-      $scope.isRefreshing = true;
-      // provide an array of feed ids
-      var ids = $scope.feeds.map(function(feed) {
-        return feed.id;
-      });
-      Feed.refresh(ids,
-        function(data, status, headers, config) {
-          console.log("refresh success");
-          $scope.isRefreshing = false;
-          console.log(data);
-          // [ { feed_id: xx1, articles: yy1 }, { feed_id: xx2, articles: yy2 }]
-          data.forEach(function(d) {
-            Feed.addArticles(d.feed_id, d.articles);
-          });
-        },
-        function(data, status, headers, config) {
-          console.log("refresh failed");
-          $scope.isRefreshing = false;
-          console.log(data);
-          // TODO
-        }
-      );
-    }
   }
 ]);
 
@@ -198,6 +190,9 @@ feedControllers.controller("listController", ["$scope", "$state", "$stateParams"
     $scope.pubDate = function(article) {
       return new Date(article.pub_date);
     }
+    $scope.$on('addArticles', function(articles) {
+      $scope.articles = $scope.articles.concat(articles);
+    });
   }
 ]);
 
