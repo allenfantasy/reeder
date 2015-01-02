@@ -127,7 +127,6 @@ public class RSSFeedParserTest {
 			assertThat(sourceItem.getTitle()).isEqualTo(SOURCE_ITEM_TITLE);
 			assertThat(sourceItem.getLink()).isEqualTo(SOURCE_ITEM_LINK);
 			assertThat(sourceItem.getDescription()).isEqualTo(SOURCE_ITEM_DESC);
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

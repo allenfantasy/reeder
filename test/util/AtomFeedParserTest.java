@@ -1,17 +1,18 @@
 package util;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-
+// Java built-in packages
+import java.util.*;
 import org.junit.*;
 
+// 3rd Party's packages
 import play.mvc.*;
 import play.test.*;
 import play.libs.F.*;
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
-import models.Feed;
-import models.Article;
+
+// Custom packages
+import models.*;
 import lib.util.*;
 
 public class AtomFeedParserTest {

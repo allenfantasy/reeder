@@ -7,14 +7,13 @@ GET     /                       controllers.Assets.at(path="/public", file="inde
 
 # Feeds
 GET     /api/feeds                  controllers.FeedsController.index()
+GET     /api/feeds/:id              controllers.FeedsController.show(id: Long)
+POST    /api/feeds/:id/refresh      controllers.FeedsController.refresh(id: Long)
 POST    /api/feeds                  controllers.FeedsController.create()
 POST    /api/feeds/refresh          controllers.FeedsController.refreshAll()
-GET     /api/feeds/:id              controllers.FeedsController.show(id: Long)
 POST    /api/feeds/:id              controllers.FeedsController.update(id: Long)
-DELETE  /api/feeds/:id              controllers.FeedsController.delete(id: Long)
-GET     /api/feeds/:id/refresh      controllers.FeedsController.refresh(id: Long)
 POST    /api/feeds/:id/read         controllers.FeedsController.read(id: Long)
-
+DELETE  /api/feeds/:id              controllers.FeedsController.delete(id: Long)
 
 # Articles
 GET     /api/articles               controllers.ArticlesController.index()
@@ -22,6 +21,10 @@ POST    /api/articles/:id/read      controllers.ArticlesController.read(id: Long
 POST    /api/articles/:id/unread    controllers.ArticlesController.unread(id: Long)
 POST    /api/articles/:id/star      controllers.ArticlesController.star(id: Long)
 POST    /api/articles/:id/unstar    controllers.ArticlesController.unstar(id: Long)
+
+# Users
+POST    /api/users/login            controllers.UsersController.login()
+POST    /api/users/register         controllers.UsersController.register()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /*file                      controllers.Assets.at(path="/public", file)

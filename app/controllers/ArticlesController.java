@@ -1,16 +1,18 @@
 package controllers;
 
+// Java built-in packages
 import java.util.*;
-
 import javax.persistence.EntityNotFoundException;
 
+// 3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import play.*;
 import play.libs.Json;
 import play.mvc.*;
+
+// Custom packages
 import models.Article;
+import static lib.Util.*;
 
 public class ArticlesController extends Controller {
   
@@ -97,10 +99,4 @@ public class ArticlesController extends Controller {
 			return internalServerError(buildErrorInfo("internal error"));
 		}
 	}
-	
-	private static ObjectNode buildErrorInfo(String msg) {
-  	ObjectNode errorInfo = Json.newObject();
-		errorInfo.put("message", msg);
-		return errorInfo;
-  }
 }

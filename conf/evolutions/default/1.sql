@@ -27,13 +27,26 @@ create table feed (
   language                  varchar(255),
   type                      varchar(255),
   version                   varchar(255),
+  user_id                   bigint,
   constraint pk_feed primary key (id))
+;
+
+create table user (
+  id                        bigint auto_increment not null,
+  email                     varchar(255),
+  name                      varchar(255),
+  password                  varchar(255),
+  created_at                varchar(255),
+  constraint uq_user_email unique (email),
+  constraint pk_user primary key (id))
 ;
 
 create sequence feed_seq;
 
 alter table article add constraint fk_article_feed_1 foreign key (feed_id) references feed (id) on delete restrict on update restrict;
 create index ix_article_feed_1 on article (feed_id);
+alter table feed add constraint fk_feed_user_2 foreign key (user_id) references user (id) on delete restrict on update restrict;
+create index ix_feed_user_2 on feed (user_id);
 
 
 
@@ -44,6 +57,8 @@ SET REFERENTIAL_INTEGRITY FALSE;
 drop table if exists article;
 
 drop table if exists feed;
+
+drop table if exists user;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 

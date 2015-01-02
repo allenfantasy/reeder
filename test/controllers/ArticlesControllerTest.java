@@ -16,7 +16,7 @@ import java.util.*;
 
 import models.*;
 
-public class ArticleControllerTest extends ControllerTest {
+public class ArticlesControllerTest extends ControllerTest {
 	@Test
   public void callIndex() {
     running(fakeApplication, new Runnable() {

@@ -1,30 +1,31 @@
 package controllers;
 
+//Java built-in packages
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
-
 import javax.persistence.*;
 
+//3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import models.Article;
-import models.Feed;
-import lib.exceptions.InvalidFeedException;
-import lib.exceptions.RefreshFeedException;
-import lib.util.*;
 import play.*;
-import play.api.libs.iteratee.internal;
 import play.libs.Json;
 import play.mvc.*;
 
+// Custom packages
+import models.*;
+import lib.util.*;
+import lib.exceptions.*;
+import static lib.Util.*;
+
+@With(AuthenticateAction.class)
 public class FeedsController extends Controller {
 	
 	@BodyParser.Of(BodyParser.Json.class)
   public static Result index() {
+		User user = getUser();
 		List results = new ArrayList();
-  	List<Feed> feeds = Feed.all();
+  	List<Feed> feeds = user.getFeeds();
   	//System.out.println(feeds);
   	for(Feed f : feeds) {
   		Map<String, Object> item = f.getData();
@@ -33,9 +34,10 @@ public class FeedsController extends Controller {
   	JsonNode json = Json.toJson(results);
   	return ok(json);
   }
-	
+
 	@BodyParser.Of(BodyParser.Json.class)
   public static Result create() {
+		User user = getUser();
 		JsonNode returnNode;
 		JsonNode json = request().body().asJson();
 		if (json == null) {
@@ -51,7 +53,9 @@ public class FeedsController extends Controller {
 		try {
 		  FeedParser parser = factory.createFeedParser(url); 	// throws MalformedURLException
 		  Feed feed = parser.readFeed(); 											// throws InvalidFeedException, IOException
-		  Feed.create(feed);
+		  user.addFeed(feed);
+		  user.save();
+		  //Feed.create(feed);
 		  returnNode = Json.toJson(feed.getData());
 		  return status(201, returnNode);
 		} catch (MalformedURLException e) {
@@ -103,7 +107,8 @@ public class FeedsController extends Controller {
 			return badRequest(buildErrorInfo("Exception"));
 		}
   }
-  
+
+	//TODO: rewrite this based on user.
   public static Result delete(Long id) {
   	try {
   		Feed.delete(id);
@@ -224,9 +229,8 @@ public class FeedsController extends Controller {
 		return newArticles;
   }
   
-  private static ObjectNode buildErrorInfo(String msg) {
-  	ObjectNode errorInfo = Json.newObject();
-		errorInfo.put("message", msg);
-		return errorInfo;
+  private static User getUser() {
+  	Map<String, Object> args = Http.Context.current().args;
+  	return (User) args.get("user");
   }
 }

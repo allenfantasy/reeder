@@ -26,7 +26,7 @@ public class Article extends Model {
   
   @ManyToOne
   @Required
-  private Feed feed = new Feed();
+  private Feed feed;
   
   /*
    * Generic query helper for entity Company with id Long
@@ -85,19 +85,49 @@ public class Article extends Model {
   public boolean equals(Object obj) {
   	if (obj instanceof Article) {
   		if (this == obj) return true; // same reference
-    	if (this.getGuid().equals( ((Article) obj).getGuid() )) {
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
+  		Article article = (Article) obj;
+  		
+  		if (this.getGuid() == null) {
+  			if (article.getGuid() == null) {
+  				// compare link when both's guids null
+  				if (this.getLink() == null) {
+  	  			if (article.getLink() == null) {
+  	  				// compare title when both's links are null
+  	  				if (this.getTitle() == null) {
+  	  					return false; // false even both's titles are null
+  	  				}
+  	  				else {
+  	  					return this.getTitle().equals(article.getTitle());
+  	  				}
+  	  			}
+  	  			else {
+  	  				return false;
+  	  			}
+  	  		}
+  				else {
+  					return this.getLink().equals(article.getLink());
+  				}
+  			}
+  			return false;
+  		}
+  		else {
+  			return this.getGuid().equals(article.getGuid());
+  		}
   	}
   	return false;
   }
   
   @Override
   public int hashCode() {
-  	return this.getGuid().hashCode();
+  	if (guid != null) {
+  		return 7 * Objects.hashCode(guid);
+  	}
+  	else if (link != null) {
+  		return 11 * Objects.hashCode(link);
+  	}
+  	else {
+  		return 13 * Objects.hashCode(title);
+  	}
   }
 
   public Feed getFeed() {

@@ -29,6 +29,10 @@ public class Feed extends Model {
   @OneToMany(mappedBy="feed", cascade=CascadeType.ALL)
   public Set<Article> articles = new LinkedHashSet<Article>();
   
+  @ManyToOne
+  @Required
+  private User user;
+  
   public Feed() {};
   
   public Feed(JsonNode node) {
@@ -101,8 +105,30 @@ public class Feed extends Model {
   public static Feed first() {
   	return find.all().get(0);
   }
+  public static void delete(Long id) {
+  	Feed f = find.byId(id);
+  	List<Feed> feeds = f.user.getFeeds();
+  	feeds.remove(f);
+  	f.user.save(); // necessary ??
+  	find.ref(id).delete();
+  }
+  public static void create(Feed feed) {
+  	feed.save();
+  }
+  
+  /**
+   * update feed's title
+   * @param feed
+   * @param title
+   */
+  public static void updateTitle(Feed feed, String title) {
+    if (title != null) {
+    	feed.setTitle(title);
+    	feed.update(); // to database
+    }
+  }
  
-  /*
+  /**
    * toString() helper
    * Override to print it, for debugging convenience 
    */
@@ -160,22 +186,10 @@ public class Feed extends Model {
   public String getVersion() {
   	return this.version;
   }
-
-  public static void create(Feed feed) {
-  	feed.save();
+  public User getUser() {
+  	return this.user;
   }
-  
-  /*
-   * only can update `title` of Feed
-   */
-  public static void updateTitle(Feed feed, String title) {
-    if (title != null) {
-    	feed.setTitle(title);
-    	feed.update(); // to database
-    }
-  }
-
-  public static void delete(Long id) {
-  	find.ref(id).delete();
+  public void setUser(User user) {
+  	this.user = user;
   }
 }
