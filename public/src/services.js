@@ -21,6 +21,7 @@ var starredFilter = function(article) {
 feedService.factory('Feed',["$http", "$rootScope", "$state", function($http, $rootScope, $state) {
   return {
     // datas
+    alreadyFetched: false,
     feeds: [],
     feed: undefined,
     articles: [],
@@ -93,12 +94,22 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", function($http, $ro
       }, []);
     },
 
-    all: function(cb) {
+    all: function(success, error) {
       var self = this;
-      $http.get('api/feeds').success(function(feeds) {
-        self.feeds = feeds;
-        cb(self.feeds);
-      });
+      if (!this.alreadyFetched) {
+        // fetch from API for the very first successful request
+        console.log("for the first time");
+        $http.get('api/feeds').success(function(feeds) {
+          self.feeds = feeds;
+          self.alreadyFetched = true;
+          success(self.feeds);
+        }).error(error);
+      }
+      else {
+        // just return feeds
+        console.log("not the first time");
+        cb(this.feeds);
+      }
     },
     updateFeedTitle: function(id, title, success, error) {
       $http.post('api/feeds/' + id, { title: title })

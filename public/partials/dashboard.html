@@ -1,0 +1,8 @@
+<!-- already logged in -->
+<div class="main">
+  <div ui-view="sidebar" class="col-left" id="sidebar" resize ng-style="resizeWithOffset()"></div>
+  <div class="col-right" resize ng-style="resizeWithOffset()">
+    <div ui-view="article-list" id="article-list"></div>
+    <div ui-view="article-detail" id="article-detail"></div>
+  </div>
+</div>

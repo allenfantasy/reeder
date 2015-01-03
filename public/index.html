@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>Reeder</title>
     <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/ionicons.min.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/public.css">
   </head>
   <body>
     <div class="header-container" id="header-container">
@@ -13,23 +15,17 @@
           <a href="/" id="header-logo">Reeder</a>
         </h1>
         <div ui-view="header-ctrl" id="header-ctrl"></div>
-      </header> 
+      </header>
     </div>
-    <div class="main-container" resize ng-style="resizeWithOffset()">
-      <div class="main">
-        <div ui-view="sidebar" class="col-left" id="sidebar" resize ng-style="resizeWithOffset()"></div>
-        <div class="col-right" resize ng-style="resizeWithOffset()">
-          <div ui-view="article-list" id="article-list"></div>
-          <div ui-view="article-detail" id="article-detail"></div>
-        </div>
-      </div>
-    </div>
+    <div ui-view class="main-container" resize ng-style="resizeWithOffset()"></div>
+
     <script src="vendors/jquery-1.9.0.min.js" type="text/javascript"></script>
     <script src="vendors/angular.min.js" type="text/javascript"></script>
     <script src="vendors/angular-animate.min.js" type="text/javascript"></script>
-    <script src="vendors/angular-resource.min.js" type="text/javascript"></script>
     <script src="vendors/angular-ui-router.min.js" type="text/javascript"></script>
     <script src="vendors/angular-sanitize.min.js" type="text/javascript"></script>
+    <script src="vendors/angular-messages.min.js" type="text/javascript"></script>
+    <script src="vendors/satellizer.js" type="text/javascript"></script>
     <script src="vendors/moment.min.js" type="text/javascript"></script>
     <script src="vendors/locale/zh-cn.js" type="text/javascript"></script>
     <script>
@@ -38,9 +34,25 @@
 
     <script src="src/app.js" type="text/javascript"></script>
     <script src="src/services.js" type="text/javascript"></script>
-    <script src="src/controllers.js" type="text/javascript"></script>
     <script src="src/filters.js" type="text/javascript"></script>
-    <script src="src/directives.js" type="text/javascript"></script>
-    <!--<script src="assets/vendors/angular-route.min.js" type="text/javascript"></script>-->
+
+    <!-- directives -->
+    <script src="src/directives/resize.js" type="text/javascript"></script>
+    <script src="src/directives/hide_add_tooltip.js" type="text/javascript"></script>
+    <script src="src/directives/target_blank.js" type="text/javascript"></script>
+    <script src="src/directives/feed_update_form.js" type="text/javascript"></script>
+    <script src="src/directives/password_match.js" type="text/javascript"></script>
+    <script src="src/directives/password_strength.js" type="text/javascript"></script>
+    <script src="src/directives/password_validate.js" type="text/javascript"></script>
+
+    <!-- controllers -->
+    <script src="src/controllers/header.js" type="text/javascript"></script>
+    <script src="src/controllers/sidebar.js" type="text/javascript"></script>
+    <script src="src/controllers/list.js" type="text/javascript"></script>
+    <script src="src/controllers/detail.js" type="text/javascript"></script>
+    <script src="src/controllers/login.js" type="text/javascript"></script>
+    <script src="src/controllers/signup.js" type="text/javascript"></script>
+    <script src="src/controllers/logout.js" type="text/javascript"></script>
+    <script src="src/controllers/profile.js" type="text/javascript"></script>
   </body>
 </html>

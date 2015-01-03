@@ -7,7 +7,7 @@
 /*** Global Style ***/
 html {
   background: none;
-  font-family: "source sans pro", "Helvetica None", sans-serif;
+  font-family: "Open Sans", "source sans pro", "Helvetica None", sans-serif;
   font-size: 100%;
   line-height: 120%;
   margin: 0;
@@ -15,6 +15,9 @@ html {
   font-smoothing: antialiased;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+body {
+  background-color: rgb(235, 237, 243);
 }
 a:active, a:hover {
   outline: 0;
@@ -33,7 +36,6 @@ header {
   position: relative;
 }
 .main-container {
-  margin: 56px auto 0;
 }
 
 .main { overflow: hidden; }
@@ -53,10 +55,9 @@ header {
 
 /*** Header ***/
 .header-container {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
+  height: 56px;
+  margin-bottom: 1px;
   z-index: 100;
   background: #fff;
   border-bottom: 1px solid #d9d9d9;
@@ -375,6 +376,7 @@ header {
   border-right: 1px solid #ccc;
   height: 100%;
   overflow-y: scroll;
+  background-color: #fff;
 }
 #article-list #no-feed {
   width: 320px;
