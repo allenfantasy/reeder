@@ -42,7 +42,7 @@ public class FeedsControllerTest extends ControllerTest {
 					
 					result = callAction(
 						controllers.routes.ref.FeedsController.index(),
-						fakeRequest().withHeader(JWT_HEADER, token)
+						fakeRequest().withHeader(JWT_HEADER, getBearerToken(token))
 					);
 					resultNode = Json.parse(contentAsString(result));
 					assertThat(status(result)).isEqualTo(UNAUTHORIZED);
@@ -53,7 +53,7 @@ public class FeedsControllerTest extends ControllerTest {
 					token = "aslgjasklgjasldjglasdjgljasg";
 				  result = callAction(
 				  	controllers.routes.ref.FeedsController.index(),
-				  	fakeRequest().withHeader(JWT_HEADER, token)
+				  	fakeRequest().withHeader(JWT_HEADER, getBearerToken(token))
 				  );
 				  resultNode = Json.parse(contentAsString(result));
 				  assertThat(status(result)).isEqualTo(UNAUTHORIZED);
@@ -64,7 +64,7 @@ public class FeedsControllerTest extends ControllerTest {
 				  token = u.createJWT();
 				  result = callAction(
 				  	controllers.routes.ref.FeedsController.index(),
-				  	fakeRequest().withHeader(JWT_HEADER, token)
+				  	fakeRequest().withHeader(JWT_HEADER, getBearerToken(token))
 				  );
 				  resultNode = Json.parse(contentAsString(result));
 				  assertThat(status(result)).isEqualTo(OK);
@@ -93,7 +93,7 @@ public class FeedsControllerTest extends ControllerTest {
   				String token = u.createJWT();
   				Result result = callAction(
   				  controllers.routes.ref.FeedsController.index(),
-  				  fakeRequest().withHeader(JWT_HEADER, token)
+  				  fakeRequest().withHeader(JWT_HEADER, getBearerToken(token))
   				);
   				assertThat(status(result)).isEqualTo(OK);
   				assertThat(contentType(result)).isEqualTo("application/json");
@@ -148,7 +148,7 @@ public class FeedsControllerTest extends ControllerTest {
     	  	JsonNode body = Json.parse(doubleQuotify("{`url`:`http://www.36kr.com/feed`}"));
     	  	result = callAction(
     	  		controllers.routes.ref.FeedsController.create(),
-    	  		fakeRequest().withJsonBody(body).withHeader(JWT_HEADER, token)
+    	  		fakeRequest().withJsonBody(body).withHeader(JWT_HEADER, getBearerToken(token))
     	  	);
     	  	assertThat(status(result)).isEqualTo(CREATED);
     	  	
@@ -187,7 +187,7 @@ public class FeedsControllerTest extends ControllerTest {
     			
     		  result = callAction(
     		  	controllers.routes.ref.FeedsController.show(feed.id),
-    		  	fakeRequest().withHeader(JWT_HEADER, token)
+    		  	fakeRequest().withHeader(JWT_HEADER, getBearerToken(token))
     		  );
     		  assertThat(status(result)).isEqualTo(OK);
     		  assertThat(contentType(result)).isEqualTo("application/json");
@@ -221,7 +221,7 @@ public class FeedsControllerTest extends ControllerTest {
   			  result = callAction(
     		  	// magic number?
     		  	controllers.routes.ref.FeedsController.show(1234567),
-    		  	fakeRequest().withHeader(JWT_HEADER, token)
+    		  	fakeRequest().withHeader(JWT_HEADER, getBearerToken(token))
     		  );
     		  assertThat(status(result)).isEqualTo(NOT_FOUND);
     		  JsonNode resultNode = Json.parse(contentAsString(result));
@@ -256,7 +256,7 @@ public class FeedsControllerTest extends ControllerTest {
     	  	
     	  	result = callAction(
     	  		controllers.routes.ref.FeedsController.update(id),
-    	  		fakeRequest().withJsonBody(body).withHeader(JWT_HEADER, token)
+    	  		fakeRequest().withJsonBody(body).withHeader(JWT_HEADER, getBearerToken(token))
     	  	);
     	  	
     	  	assertThat(status(result)).isEqualTo(OK);
@@ -293,7 +293,7 @@ public class FeedsControllerTest extends ControllerTest {
     			
     			result = callAction(
     				controllers.routes.ref.FeedsController.delete(f.id),
-    				fakeRequest().withHeader(JWT_HEADER, token)
+    				fakeRequest().withHeader(JWT_HEADER, getBearerToken(token))
     			);
     			
     			u = User.findByEmail(USER_EMAIL);
@@ -348,6 +348,10 @@ public class FeedsControllerTest extends ControllerTest {
   			}*/
   		}
   	});
+  }
+  
+  private String getBearerToken(String token) {
+  	return "Bearer " + token;
   }
   
 }

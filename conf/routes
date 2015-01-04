@@ -23,8 +23,8 @@ POST    /api/articles/:id/star      controllers.ArticlesController.star(id: Long
 POST    /api/articles/:id/unstar    controllers.ArticlesController.unstar(id: Long)
 
 # Users
-POST    /api/users/login            controllers.UsersController.login()
-POST    /api/users/register         controllers.UsersController.register()
+POST    /api/login                  controllers.UsersController.login()
+POST    /api/signup                 controllers.UsersController.register()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /*file                      controllers.Assets.at(path="/public", file)

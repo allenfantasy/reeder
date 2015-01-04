@@ -1,0 +1,32 @@
+<div class="container-wrapper non-login">
+  <div class="container">
+    <div class="center-form panel">
+      <div class="panel-body">
+        <h2 class="text-center">Login</h2>
+        <form method="post" ng-submit="login()" name="loginForm">
+
+          <div class="form-group has-icon">
+            <input class="form-control" type="text" name="email" ng-model="email" placeholder="Email" required autofocus>
+            <span class="ion-at form-control-icon"></span>
+          </div>
+
+          <div class="form-group has-icon">
+            <input class="form-control" type="password" name="password" ng-model="password" placeholder="Password" required>
+            <span class="ion-key form-control-icon"></span>
+          </div>
+
+          <button type="submit" ng-disabled="loginForm.$invalid" class="submit-button">Sign up</button>
+
+          <!-- TODO: forget password -->
+          <!--<p class="text-center">
+            <a href="#">Forget your password?</a>
+          </p>-->
+
+          <p class="text-center text-muted">
+            Don't have an account yet? <a ui-sref="signup">Sign up</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -8,7 +8,7 @@ app.directive("passwordMatch", function() {
     },
     link: function(scope, elem, attrs, ngModel) {
       ngModel.$validators.compareTo = function(modelValue) {
-        console.log(modelValue, scope.otherModelValue);
+        //console.log(modelValue, scope.otherModelValue);
         return modelValue === scope.otherModelValue;
       };
       scope.$watch("otherModelValue", function() {

@@ -5,7 +5,9 @@ import java.util.*;
 
 // 3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nimbusds.jose.*;
+
 import play.*;
 import play.libs.Json;
 import play.mvc.*;
@@ -72,7 +74,9 @@ public class UsersController extends ApplicationController {
 		String error = u.validate();
 		if (error == null){
 			u.save();
-			return ok();
+			ObjectNode info = Json.newObject();
+			info.put("id", u.id);
+			return ok(info);
 		} else {
 			return badRequest(buildErrorInfo(error));
 		}

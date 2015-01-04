@@ -29,7 +29,8 @@ public class AuthenticateAction extends Simple {
 		Promise<SimpleResult> ret = null;
 		
 		Http.Request request = ctx.request();
-		String token = request.getHeader("Authorization");
+		String[] temp = request.getHeader("Authorization").split(" ");
+		String token = temp[1];
 		if (token == null) {
 		  ret = buildSimpleErrorResult("Invalid token", INVALID_TOKEN);
 		}

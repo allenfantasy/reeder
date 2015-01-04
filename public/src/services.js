@@ -18,7 +18,8 @@ var starredFilter = function(article) {
 };
 
 
-feedService.factory('Feed',["$http", "$rootScope", "$state", function($http, $rootScope, $state) {
+feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
+  function($http, $rootScope, $state, $auth) {
   return {
     // datas
     alreadyFetched: false,
@@ -98,7 +99,7 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", function($http, $ro
       var self = this;
       if (!this.alreadyFetched) {
         // fetch from API for the very first successful request
-        console.log("for the first time");
+        //console.log("for the first time");
         $http.get('api/feeds').success(function(feeds) {
           self.feeds = feeds;
           self.alreadyFetched = true;
@@ -107,8 +108,8 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", function($http, $ro
       }
       else {
         // just return feeds
-        console.log("not the first time");
-        cb(this.feeds);
+        //console.log("not the first time");
+        success(this.feeds);
       }
     },
     updateFeedTitle: function(id, title, success, error) {
@@ -152,7 +153,7 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", function($http, $ro
 
     validateURL: function(url) {
       // Credit to http://regexr.com?37i6s
-      // Also the SO answer which provide the last link: http://stackoverflow.com/a/3809435/1301194
+      // Also the SO answer which provide the link above: http://stackoverflow.com/a/3809435/1301194
       var regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
       return url.match(regex);
     },

@@ -21,25 +21,23 @@ angular.module("rssApp").controller("sidebarController", ["$scope", "$window", "
     $scope.isRefreshing = false;
     $scope.addTooltipActive = false;
 
-    console.log(Feed.alreadyFetched);
     Feed.all(
       function(feeds) {
         $scope.feeds = feeds;
         console.log(feeds);
-        console.log(Feed.alreadyFetched);
       },
       function(data, status, headers, config) {
         if (status == 401) {
-      console.log("401: " + data.message);
-      if (data.code === INVALID_TOKEN) {
-        // TODO
-      } else if (data.code === USER_NOT_FOUND) {
-        // TODO
-      } else if (data.code === EXPIRED_TOKEN) {
-        // TODO
-      }
-    }
-  });
+          console.log("401: " + data.message);
+          if (data.code === INVALID_TOKEN) {
+            // TODO
+          } else if (data.code === USER_NOT_FOUND) {
+            // TODO
+          } else if (data.code === EXPIRED_TOKEN) {
+            // TODO
+          }
+        }
+      });
 
   $scope.fn = {
     actions: {

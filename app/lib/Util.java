@@ -1,17 +1,30 @@
 package lib;
 
+// Java built-in packages
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+// 3rd Party's packages (include Play)
 import org.json.*;
-
 import play.libs.Json;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * Static utility helpers
+ * 
+ * @author allen
+ *
+ */
 public class Util {
-  public static HashMap<String, String> jsonToMap(String t) throws JSONException {
+	/**
+	 * Convert JSON string to HashMap
+	 * 
+	 * @param t
+	 * @return
+	 * @throws JSONException if string is not valid JSON
+	 */
+	public static HashMap<String, String> jsonToMap(String t) throws JSONException {
   	HashMap<String, String> map = new HashMap<String, String>();
   	JSONObject jObject = new JSONObject(t);
   	Iterator<?> keys = jObject.keys();
@@ -52,7 +65,7 @@ public class Util {
   }
   
   /**
-	 * build error info
+	 * build error info object
 	 * @param msg
 	 * @return
 	 */
