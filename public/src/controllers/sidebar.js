@@ -2,13 +2,10 @@
 // let controllers could communicate between each other
 // by sharing and modifying data through service's API.
 
-// TODO: should move these into constants
-var INVALID_TOKEN = 1;
-var USER_NOT_FOUND = 2;
-var EXPIRED_TOKEN = 3;
 
-angular.module("rssApp").controller("sidebarController", ["$scope", "$window", "$state", "$stateParams", "Feed",
-  function($scope, $window, $state, $stateParams, Feed) {
+
+angular.module("rssApp").controller("sidebarController", ["$scope", "$rootScope", "$window", "$state", "$stateParams", "Feed", "Util",
+function($scope, $rootScope, $window, $state, $stateParams, Feed, Util) {
     // models initialization
     $scope.feeds = [];
     $scope.actions = [
@@ -28,16 +25,11 @@ angular.module("rssApp").controller("sidebarController", ["$scope", "$window", "
       },
       function(data, status, headers, config) {
         if (status == 401) {
-          console.log("401: " + data.message);
-          if (data.code === INVALID_TOKEN) {
-            // TODO
-          } else if (data.code === USER_NOT_FOUND) {
-            // TODO
-          } else if (data.code === EXPIRED_TOKEN) {
-            // TODO
-          }
+          Util.relogin(data.code);
         }
       });
+
+  // so many functions...
   $scope.fn = {}
   $scope.fn.actions = {
     today: function() {
@@ -97,13 +89,16 @@ angular.module("rssApp").controller("sidebarController", ["$scope", "$window", "
         console.log("no id or title");
         return;
       }
-      $scope.hideUpdateForm();
+      $scope.fn.updateForm.hide();
       Feed.updateFeedTitle(id, title,
         function(data, status, headers, config) {
           console.log('update feed title success');
           console.log(data);
         },
         function(data, status, headers, config) {
+          if (status === 401) {
+            // TODO: delete token & go back to login page
+          }
           console.log('update feed title error');
           console.log(data);
         }
@@ -116,8 +111,8 @@ angular.module("rssApp").controller("sidebarController", ["$scope", "$window", "
       var url = event.target.value;
       if (event.keyCode === 13) {
         console.log("it's a Enter. check the url please");
-        if (Feed.validateURL(url)) {
-          //  TODO should add some loading tips
+        if (Util.validateURL(url)) {
+          // block other create request...
           console.log("valid url. Ready to create Feed");
           Feed.create(url,
             function(data, status, headers, config) {
@@ -126,6 +121,9 @@ angular.module("rssApp").controller("sidebarController", ["$scope", "$window", "
               Feed.addFeed(data);
             },
             function(data, status, headers, config) {
+              if (status === 401) {
+                // TODO: clear token, back to login
+              }
               console.log('update feed title error');
               console.log(data);
             }
@@ -141,6 +139,27 @@ angular.module("rssApp").controller("sidebarController", ["$scope", "$window", "
       Feed.setArticle(undefined); // clear article-detail section
       //$scope.t = feed.title;
       $state.go("dashboard.feed", { id: feed.id }, { reload: true });
+    },
+    delete: function(feed) {
+      // update views
+      console.log(feed.id);
+      $scope.fn.updateForm.hide();
+      Feed.removeFeed(feed);
+
+      // sync with database
+      Feed.delete(feed.id, function(data, status, headers, config) {
+        // TODO: notice
+        console.log("delete feed successful");
+        console.log(data);
+        $rootScope.$emit("notice", {
+          type: "success",
+          content: "Delete success!"
+        });
+      }, function(data, status, headers, config) {
+        // error
+        console.log("delete feed failed!!!");
+        console.log(data);
+      })
     },
     /**
      * Refresh all feeds
@@ -164,6 +183,9 @@ angular.module("rssApp").controller("sidebarController", ["$scope", "$window", "
           });
         },
         function(data, status, headers, config) {
+          if (status === 401) {
+            // TODO: clear token, back to login
+          }
           console.log("refresh failed");
           $scope.isRefreshing = false;
           console.log(data);

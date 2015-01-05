@@ -1,6 +1,4 @@
-'use strict';
-
-var feedService = angular.module('feedService', []);
+var app = angular.module('rssApp');
 
 var todayFilter = function(article) {
 
@@ -18,9 +16,8 @@ var starredFilter = function(article) {
   return article.starred;
 };
 
-
-feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
-  function($http, $rootScope, $state, $auth) {
+app.factory('Feed',["$http", "$rootScope", "$state", "$stateParams", "$auth",
+function($http, $rootScope, $state, $stateParams, $auth) {
   return {
     // datas
     alreadyFetched: false,
@@ -29,6 +26,10 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
     articles: [],
     article: undefined,
 
+    /** View layer functions, handle datas bind to views **/
+    // TODO separate these functions into DataCenter
+    // and wrap all Feed's $http requests into Feed
+    // and wrap all Article's $http requests info Article
     getFeeds: function() {
       return this.feeds;
     },
@@ -42,6 +43,17 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
       this.feed = feed;
       this.articles = feed.articles;
     },
+    removeFeed: function(feed) {
+      var index;
+      for(var i = 0; i < this.feeds.length; i++) {
+        if (this.feeds[i].id === feed.id) {
+          index = i;
+          break;
+        }
+      }
+      this.feeds.splice(index, 1);
+      console.log(this.feeds);
+    },
     getArticles: function() {
       return this.articles;
     },
@@ -52,27 +64,34 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
       this.article = article;
     },
     addArticles: function(feedId, articles) {
+      var filters = {
+        default: function(articles) {
+          return articles;
+        },
+        today: function(articles) {
+          return articles.filter(todayFilter);
+        },
+        star: function(articles) {
+          return articles.filter(starredFilter);
+        }
+      };
+      filters.all = filters.default;
+
       for(var i = 0; i < this.feeds.length; i++) {
         if (this.feeds[i].id == feedId) {
           this.feeds[i].articles = this.feeds[i].articles.concat(articles);
 
           // update list section by emitting events
-          var state = $state.$current.name;
-          if ((state == "feed" || state == "article") && this.feed.id == feedId) {
-            $rootScope.$emit("addArticles", articles);
-          } else if (state == "today") {
-            $rootScope.$emit("addArticles", articles.filter(todayFilter));
-          } else if (state == "star") {
-            $rootScope.$emit("addArticles", articles.filter(starredFilter));
-          } else if (state == "all") {
-            $rootScope.$emit("addArticles", articles);
-          }
+          var action = $stateParam.action || "default";
+
+          console.log('current action: ' + action);
+          $rootScope.$emit("addArticles", filters[action](articles));
         }
       }
     },
     /**
-     * put all articles into list
-     */
+    * put all articles into list
+    */
     setAll: function() {
       this.feed = undefined;
       this.articles = this.feeds.reduce(function(prev, feed) {
@@ -80,15 +99,14 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
       },[]);
     },
     /**
-     * put all starred articles into list
-     */
+    * put all starred articles into list
+    */
     setAllStarred: function() {
       this.feed = undefined;
       this.articles = this.feeds.reduce(function(prev, feed) {
         return prev.concat(feed.articles.filter(starredFilter));
       }, []);
     },
-
     setToday: function() {
       this.feed = undefined;
       this.articles = this.feeds.reduce(function(prev, feed) {
@@ -96,6 +114,7 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
       }, []);
     },
 
+    /*** $http request wrappers ***/
     all: function(success, error) {
       var self = this;
       if (!this.alreadyFetched) {
@@ -119,15 +138,26 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
       .error(error);
     },
     create: function(url, success, error) {
-      $http.post('api/feeds', { url: url })
-        .success(success)
-        .error(error);
+      console.log("before emitting");
+      $rootScope.$emit("notice", {
+        type: "info",
+        content: "Adding feed..."
+      });
+      $http.post('api/feeds', { url: url }, { timeout: 20 * 1000 }) // 20s timeout
+        .success(success).error(error);
+    },
+    delete: function(feedId, success, error) {
+      console.log("ready to delete");
+      $http.delete("api/feeds/" + feedId, {}, { timeout: 20 * 1000 })
+        .success(success).error(error);
     },
     refresh: function(ids, success, error) {
       $http.post('api/feeds/refresh', { ids: ids }, { timeout: 20 * 1000 })
-        .success(success)
-        .error(error);
+      .success(success)
+      .error(error);
     },
+
+    // TODO: decouple these mangling code...
     readArticles: function(success, error) {
       // Case A: "feed", "article"
       // 1. find feed
@@ -161,7 +191,7 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
 
         // sync database
         $http.post('api/feeds/' + feedId + '/read')
-             .success(success).error(error);
+        .success(success).error(error);
 
       } else { // Case B
 
@@ -189,15 +219,8 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
           return article.id;
         });
         $http.post('api/articles/read_batch', { ids: articleIds })
-             .success(success).error(error);
+        .success(success).error(error);
       }
-    },
-
-    validateURL: function(url) {
-      // Credit to http://regexr.com?37i6s
-      // Also the SO answer which provide the link above: http://stackoverflow.com/a/3809435/1301194
-      var regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
-      return url.match(regex);
     },
 
     readArticle: function(article) {
@@ -241,36 +264,5 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
       // 有未读的内容
       if (feed.allReaded) feed.allReaded = false;
     }
-  };
-}]);
-
-feedService.factory('Article', ["$http", function($http) {
-  // TODO: Add callbacks
-  return {
-    read: function(id) {
-      $http.post('api/articles/' + id + '/read').success(function(data) {
-        console.log('read success');
-        console.log(data);
-      });
-    },
-    unread: function(id) {
-      $http.post('api/articles/' + id + '/unread').success(function(data) {
-        console.log('unread success');
-        console.log(data);
-      });
-    },
-    star: function(id) {
-      $http.post('api/articles/' + id + '/star').success(function(data) {
-        console.log('star success');
-        console.log(data);
-      });
-    },
-    unstar: function(id) {
-      $http.post('api/articles/' + id + '/unstar').success(function(data) {
-        console.log('unstar success');
-        console.log(data);
-      });
-    }
-    // TODO: read batch
   };
 }]);

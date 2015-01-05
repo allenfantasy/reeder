@@ -108,8 +108,8 @@ public class FeedsController extends Controller {
 		}
   }
 
-	//TODO: rewrite this based on user.
   public static Result delete(Long id) {
+  	System.out.println("before deleting feed");
   	try {
   		Feed.delete(id);
   		return ok();

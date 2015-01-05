@@ -4,9 +4,7 @@ var rssApp = angular.module('rssApp', [
   'ui.router',
   'ngSanitize',
   'ngMessages',
-  'satellizer',
-  'feedService',
-  'feedFilters'
+  'satellizer'
 ]);
 
 rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider, $authProvider) {

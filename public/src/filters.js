@@ -1,9 +1,9 @@
 'use strict';
 
-var feedFilters = angular.module('feedFilters', []);
+var app = angular.module("rssApp");
 
-feedFilters.filter('fromNow', function() {
+app.filter('fromNow', function() {
   return function(date) {
     return moment(date).fromNow();
   }
-})
+});
