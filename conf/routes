@@ -21,6 +21,7 @@ POST    /api/articles/:id/read      controllers.ArticlesController.read(id: Long
 POST    /api/articles/:id/unread    controllers.ArticlesController.unread(id: Long)
 POST    /api/articles/:id/star      controllers.ArticlesController.star(id: Long)
 POST    /api/articles/:id/unstar    controllers.ArticlesController.unstar(id: Long)
+POST    /api/articles/read_batch    controllers.ArticlesController.readBatch()
 
 # Users
 POST    /api/login                  controllers.UsersController.login()

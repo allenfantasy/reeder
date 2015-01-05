@@ -13,7 +13,7 @@ html {
   margin: 0;
   padding: 0;
   font-smoothing: antialiased;
-  -webkit-font-smoothing: antialiased;
+  /*-webkit-font-smoothing: antialiased; */
   text-rendering: optimizeLegibility;
 }
 body {
@@ -117,7 +117,7 @@ header {
     background-image: url("/images/settings.png");
   }
   #header-ctrl .header-nav-tooltip {
-    margin: 4.7em 0 0 -9em;
+    margin: 4.2em -2px 0 -9em;
     display: block;
     position: absolute;
     z-index: 999;
@@ -136,6 +136,8 @@ header {
     background-color: #fff;
     font-size: 13px;
     padding: 0;
+    right: 0;
+    border-top: 0;
   }
   #header-ctrl .header-nav-tooltip:before,
   #header-ctrl .header-nav-tooltip:after {
@@ -157,8 +159,39 @@ header {
     border-width: 0 9px 9px;
     border-color: #fff transparent;
   }
+  .header-nav-tooltip li:first-child {
+    border-radius: 2px 2px 0 0;
+  }
+  .header-nav-tooltip li:first-child+li {
+    border-top: 1px solid #eaeaea;
+  }
+  .header-nav-tooltip li:last-child {
+    border-radius: 0 0 2px 2px;
+  }
+  .header-nav-tooltip .tooltip-list-item {
+    padding: 0;
+    border-bottom: 0;
+    overflow: hidden;
+    list-style: none;
+  }
+  .header-nav-tooltip .tooltip-list-item a {
+    padding: 12px 104px 8px 13px;
+    color: #444;
+    text-decoration: none;
+    text-shadow: 0 1px #fff;
+    display: block;
+  }
 
-
+  /** Non-login header **/
+  #header-ctrl .non-login .nav-item {
+    line-height: 54px;
+    text-align: center;
+    padding: 0 10px;
+  }
+  #header-ctrl .non-login .nav-item a {
+    text-decoration: none;
+    color: #777;
+  }
 
 /*** Sidebar Navigation ***/
 .view-region-nav {

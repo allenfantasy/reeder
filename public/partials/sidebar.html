@@ -14,7 +14,7 @@
         <li class="dr-list-item" ng-class="{active: fn.feed.isActive(feed)}" ng-repeat="feed in feeds">
           <div class="dr-label" ng-class="{'all-readed': feed.allReaded}" ng-click="fn.feed.set(feed)">
             <span class="icon"><img ng-src="{{feed.link}}favicon.ico"></span>
-            <span>{{ feed.title }} ({{ fn.feed.unreadNum(feed) }})</span>
+            <span>{{ feed.title }} {{ fn.feed.unreadNum(feed) }}</span>
             <span class="update-title" ng-click="fn.updateForm.show(feed, $event)"></span>
           </div>
         </li>
@@ -26,10 +26,11 @@
 <div id="view-add" class="view-add">
   <div>
     <div class="add-btn">
-      <div class="add-btn-label" hide-add-tooltip="fn.addTooltip.hide()" ng-click="fn.addTooltip.show()">
+      <div class="add-btn-label" hide-tooltip="fn.addTooltip.hide()" ng-click="fn.addTooltip.show()">
+        <!-- NOTE: we only need to call hide() once. Check comments in directives/hide_tooltip.js -->
         <div class="label-inner">Add</div>
       </div>
-      <div class="tooltip-add" hide-add-tooltip="fn.addTooltip.hide()" ng-show="addTooltipActive">
+      <div class="tooltip-add" hide-tooltip="" ng-show="addTooltipActive">
         <ul class="tooltip-list">
           <li class="tooltip-list-item tooltip-input">
             <form id="feed-add-form" ng-keydown="fn.feed.create($event)">

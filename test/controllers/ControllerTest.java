@@ -2,6 +2,7 @@ package controllers;
 
 // Java built-in packages
 import java.util.*;
+
 import org.junit.*;
 
 // 3rd Party's packages (include Play)
@@ -10,6 +11,7 @@ import play.test.*;
 import play.libs.F.*;
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
+
 import com.avaje.ebean.*;
 
 // Custom packages
@@ -18,6 +20,11 @@ import models.*;
 
 public abstract class ControllerTest {
 	protected static FakeApplication fakeApplication;
+	
+	private static final String JWT_HEADER = "Authorization";
+	private static final String USER_EMAIL = "allen@dxhackers.com";
+	private static final String USER_NAME = "allenfantasy";
+	private static final String USER_PASSWORD = "fantasy32097";
 	
 	@Before
 	public void startFakeApplication() {
@@ -72,5 +79,21 @@ public abstract class ControllerTest {
 	}
 	protected String doubleQuotify(String str) {
 		return str.replace('`', '"');
+	}
+	protected String getBearerToken(String token) {
+  	return "Bearer " + token;
+	}
+	
+	protected String getJWTHeader() { 
+		return JWT_HEADER;
+	}
+	protected String getUserName() {
+		return USER_NAME;
+	}
+	protected String getUserEmail() {
+		return USER_EMAIL;
+	}
+	protected String getUserPassword() {
+		return USER_PASSWORD;
 	}
 }

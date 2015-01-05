@@ -3,8 +3,9 @@
 var feedService = angular.module('feedService', []);
 
 var todayFilter = function(article) {
+
   var date = new Date(article.pub_date);
-  var today = new Date(article.pub_date);
+  var today = new Date();
   today.setHours(0); today.setMinutes(0); today.setSeconds(0);
 
   var tomorrow = new Date(article.pub_date);
@@ -127,28 +128,69 @@ feedService.factory('Feed',["$http", "$rootScope", "$state", "$auth",
         .success(success)
         .error(error);
     },
-    readFeed: function() {
-      var feedId = this.feed.id;
-      var feed;
-      // update this.feeds to update sidebar
-      for(var i = 0; i < this.feeds.length; i++) {
-        if (this.feeds[i].id === feedId) {
-          this.feeds[i].allReaded = true;
-          break;
+    readArticles: function(success, error) {
+      // Case A: "feed", "article"
+      // 1. find feed
+      // 2. check all feed's articles as readed
+      // 3. mark feed as "readed"
+
+      // Case B: "all", "star", "today"
+      // 1. find all articles in the list
+      // 2. check them as readed
+      // 3. check if their feeds are readed as well,
+      //    mark it as "readed" if so
+
+      var feed = this.feed;
+      var feedId;
+      var articles = this.articles; // by reference ?
+      if (feed) { // Case A
+        feedId = feed.id;
+
+        // update this.feeds to update sidebar
+        for(var i = 0; i < this.feeds.length; i++) {
+          if (this.feeds[i].id === feedId) {
+            this.feeds[i].allReaded = true;
+            break;
+          }
         }
+
+        // update this.articles to update list
+        articles.forEach(function(article) {
+          article.readed = true;
+        });
+
+        // sync database
+        $http.post('api/feeds/' + feedId + '/read')
+             .success(success).error(error);
+
+      } else { // Case B
+
+        var feedIds = [];
+        var articleIds;
+
+        // update this.articles to update list
+        // and collect all feed ids
+        articles.forEach(function(article) {
+          article.readed = true;
+          if (feedIds.indexOf(article.feed_id) === -1) {
+            feedIds.push(article.feed_id);
+          }
+        });
+
+        // update all related feeds in this.feeds to update sidebar
+        this.feeds.forEach(function(feed) {
+          if (feedIds.indexOf(feed.id) !== -1) {
+            feed.allReaded = true;
+          }
+        });
+
+        // sync database
+        articleIds = articles.map(function(article) {
+          return article.id;
+        });
+        $http.post('api/articles/read_batch', { ids: articleIds })
+             .success(success).error(error);
       }
-
-      // update this.articles to update list
-      this.articles.forEach(function(article) {
-        article.readed = true;
-      });
-
-      // sync database
-      $http.post('api/feeds/' + feedId + '/read').success(function(data) {
-        // TODO deal with failure, add callbacks
-        console.log('read feed success');
-        console.log(data);
-      });
     },
 
     validateURL: function(url) {

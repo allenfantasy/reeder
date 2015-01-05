@@ -14,7 +14,15 @@
         <h1 class="header-logo-container">
           <a href="/" id="header-logo">Reeder</a>
         </h1>
-        <div ui-view="header-ctrl" id="header-ctrl"></div>
+        <div ui-view="header-ctrl" id="header-ctrl">
+          <!-- default(non-login) header nav -->
+          <div class="header-nav non-login" id="header-nav">
+            <ul class="nav-list">
+              <li class="nav-item"><a ui-sref="login">Login</a></li>
+              <li class="nav-item"><a ui-sref="login">Signup</a></li>
+            </ul>
+          </div>
+        </div>
       </header>
     </div>
     <div ui-view class="main-container" resize ng-style="resizeWithOffset()"></div>
@@ -38,7 +46,7 @@
 
     <!-- directives -->
     <script src="src/directives/resize.js" type="text/javascript"></script>
-    <script src="src/directives/hide_add_tooltip.js" type="text/javascript"></script>
+    <script src="src/directives/hide_tooltip.js" type="text/javascript"></script>
     <script src="src/directives/target_blank.js" type="text/javascript"></script>
     <script src="src/directives/feed_update_form.js" type="text/javascript"></script>
     <script src="src/directives/password_match.js" type="text/javascript"></script>

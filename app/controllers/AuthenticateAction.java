@@ -30,6 +30,7 @@ public class AuthenticateAction extends Simple {
 		
 		Http.Request request = ctx.request();
 		String[] temp = request.getHeader("Authorization").split(" ");
+		// TODO: protect from OutOfIndex
 		String token = temp[1];
 		if (token == null) {
 		  ret = buildSimpleErrorResult("Invalid token", INVALID_TOKEN);

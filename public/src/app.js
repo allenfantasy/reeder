@@ -9,12 +9,11 @@ var rssApp = angular.module('rssApp', [
   'feedFilters'
 ]);
 
-
 rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider, $authProvider) {
   // auth configuration
   $authProvider.loginOnSignup = false;
   $authProvider.loginRedirect = '/dashboard';
-  $authProvider.logoutRedirect = '/home';
+  $authProvider.logoutRedirect = '/login';
   $authProvider.signupRedirect = '/login';
   $authProvider.loginUrl = '/api/login';
   $authProvider.signupUrl = '/api/signup';
@@ -26,7 +25,6 @@ rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider, $a
 
   // default & 404
   $urlRouterProvider.otherwise('/dashboard');
-  //$urlRouterProvider.otherwise('/signup');
 
   // TODO ready to refactor this
   var dashboardViews = {
@@ -49,12 +47,12 @@ rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider, $a
   };
 
   $stateProvider
-    .state("home", {
-      // TODO some public fancy homepage like intro page
+    // TODO some public fancy homepage like intro page
+    /*.state("home", {
       url: "/home",
       template: "<h1>This is public</h1>",
       controller: function($scope) {}
-    })
+    })*/
     .state("login", {
       url: "/login",
       templateUrl: "partials/login.html",
@@ -99,21 +97,16 @@ rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider, $a
       url: "/feed/:id",
       views: dashboardViews
     })
-    .state("dashboard.article", {
-      url: "/feed/:id/article/:title",
+    .state("dashboard.feed.article", {
+      url: "/article/:title",
       views: dashboardViews
     })
-    .state("dashboard.today", {
-      url: "/today",
+    .state('dashboard.misc', {
+      url: '/:action',
       views: dashboardViews
     })
-    .state("dashboard.star", {
-      url: "/star",
-      views: dashboardViews
-    })
-    .state("dashboard.all", {
-      url: "/all",
+    .state('dashboard.misc.article', {
+      url: '/:title',
       views: dashboardViews
     });
-
 });
