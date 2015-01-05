@@ -1,0 +1,17 @@
+<div class="header-nav" id="header-nav">
+  <div class="header-notice" ng-show="notice" ng-class="notice.type">
+    {{ notice.content }}
+  </div>
+  <ul class="nav-list">
+    <li class="nav-item settings" hide-tooltip="hideSettings()" ng-click="showSettings()">
+      <ul class="tooltip-list header-nav-tooltip" ng-show="settingsTooltipActive" hide-tooltip>
+        <li class="tooltip-list-item">
+          <a ui-sref="profile">Settings</a>
+        </li>
+        <li class="tooltip-list-item">
+          <a ui-sref="logout">Sign out</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

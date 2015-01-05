@@ -67,8 +67,16 @@ rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider, $a
     })
     .state("profile", {
       url: "/profile",
-      template: "partials/profile.html",
-      controller: "ProfileController"
+      views: {
+        "@": {
+          templateUrl: "partials/profile.html",
+          controller: "ProfileController"
+        },
+        "header-ctrl@": {
+          templateUrl: "partials/profile/header_ctrl.html",
+          controller: "profileHeaderController"
+        }
+      }
     })
     .state("dashboard", { // already logged in
       url: "/dashboard",

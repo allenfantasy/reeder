@@ -8,6 +8,8 @@ import java.util.*;
 
 // 3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.*;
@@ -18,11 +20,11 @@ import play.libs.*;
 import play.libs.F.*;
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
-
 // Custom packages
 import models.*;
 
 public class UsersControllerTest extends ControllerTest {
+	protected static User u;
 	private static final String EMAIL = "allen@dxhackers.com";
 	private static final String USERNAME = "allenfantasy";
 	private static final String PASSWORD = "asglasi476sngl8";
@@ -181,6 +183,61 @@ public class UsersControllerTest extends ControllerTest {
 				assertThat(status(result)).isEqualTo(BAD_REQUEST);
 				assertThat(resultNode.get("message").textValue())
 													.isEqualTo("invalid email format");
+			}
+		});
+	}
+
+	@Test
+	public void callGetProfile() {
+		running(fakeApplication, new Runnable() {
+
+			@Override
+			public void run() {
+				u = createUser(getUserEmail(), getUserName(), getUserPassword());
+				try {
+					String token = u.createJWT();
+					
+					Result result = callAction(
+						controllers.routes.ref.UsersController.getProfile(),
+						fakeRequest().withHeader(getJWTHeader(), getBearerToken(token))
+					);
+					assertThat(status(result)).isEqualTo(OK);
+				  JsonNode resultNode = Json.parse(contentAsString(result));
+				  assertThat(resultNode.get("name").textValue()).isEqualTo(getUserName());
+
+				} catch (JOSEException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	@Test
+	public void callUpdateProfile() {
+		running(fakeApplication, new Runnable() {
+			
+			@Override
+			public void run() {
+				u = createUser(getUserEmail(), getUserName(), getUserPassword());
+				Long id = u.id;
+				try {
+					String token = u.createJWT();
+					final String DUMMY = "dummy";
+					JsonNodeFactory nodeFactory = JsonNodeFactory.instance; // singleton
+					ObjectNode body = nodeFactory.objectNode();
+					body.put("name", DUMMY);
+					
+					Result result = callAction(
+						controllers.routes.ref.UsersController.updateProfile(),
+						fakeRequest().withJsonBody(body).withHeader(getJWTHeader(), getBearerToken(token))
+					);
+					assertThat(status(result)).isEqualTo(OK);
+					u = User.findById(id);
+				  assertThat(u.getName()).isEqualTo(DUMMY);
+
+				} catch (JOSEException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}

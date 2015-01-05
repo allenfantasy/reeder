@@ -143,6 +143,9 @@ public class User extends Model {
   public String getName() {
   	return this.name;
   }
+  public void setName(String name) {
+  	this.name = name;
+  }
   public List<Feed> getFeeds() {
   	return this.feeds;
   }

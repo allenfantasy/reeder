@@ -26,6 +26,8 @@ POST    /api/articles/read_batch    controllers.ArticlesController.readBatch()
 # Users
 POST    /api/login                  controllers.UsersController.login()
 POST    /api/signup                 controllers.UsersController.register()
+GET     /api/me                     controllers.UsersController.getProfile()
+PUT     /api/me                     controllers.UsersController.updateProfile()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /*file                      controllers.Assets.at(path="/public", file)
