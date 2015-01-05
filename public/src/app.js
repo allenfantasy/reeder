@@ -24,7 +24,6 @@ rssApp.config(function($stateProvider, $urlRouterProvider, $locationProvider, $a
   // default & 404
   $urlRouterProvider.otherwise('/dashboard');
 
-  // TODO ready to refactor this
   var dashboardViews = {
     "sidebar": {
       templateUrl: "partials/sidebar.html",

@@ -2,10 +2,8 @@
 // let controllers could communicate between each other
 // by sharing and modifying data through service's API.
 
-
-
-angular.module("rssApp").controller("sidebarController", ["$scope", "$rootScope", "$window", "$state", "$stateParams", "Feed", "Util",
-function($scope, $rootScope, $window, $state, $stateParams, Feed, Util) {
+angular.module("rssApp").controller("sidebarController", ["$scope", "$rootScope", "$state", "$stateParams", "$timeout", "Feed", "Util",
+function($scope, $rootScope, $state, $stateParams, $timeout, Feed, Util) {
     // models initialization
     $scope.feeds = [];
     $scope.actions = [
@@ -15,8 +13,10 @@ function($scope, $rootScope, $window, $state, $stateParams, Feed, Util) {
       //{ name: "category", text: "分类" } // TODO
       ];
     $scope.selectedFeed = null;
-    $scope.isRefreshing = false;
     $scope.addTooltipActive = false;
+    // state holders
+    $scope.refreshingFeed = false;
+    $scope.fetchingFeed = false;
 
     Feed.all(
       function(feeds) {
@@ -24,33 +24,36 @@ function($scope, $rootScope, $window, $state, $stateParams, Feed, Util) {
         console.log(feeds);
       },
       function(data, status, headers, config) {
-        if (status == 401) {
+        if (status === 401) {
           Util.relogin(data.code);
+        } else {
+          var msg = Util.getErrorMessage(data);
+          Util.alertError(msg);
         }
       });
 
   // so many functions...
-  $scope.fn = {}
-  $scope.fn.actions = {
-    today: function() {
-      Feed.setToday();
-      Feed.setArticle(undefined); // clear article-detail section
-      $state.go("dashboard.misc", { action: 'today' }, { reload: true });
-    },
-    star: function() {
-      Feed.setAllStarred();
-      Feed.setArticle(undefined); // clear article-detail section
-      $state.go("dashboard.misc", { action: 'star' }, { reload: true });
-    },
-    all: function() {
-      Feed.setAll();
-      Feed.setArticle(undefined); // clear article-detail section
-      $state.go("dashboard.all", { action: 'all' }, { reload: true });
-    },
-    isActive: function(name) {
-      return $stateParams.action === name;
-    }
+  $scope.fn = {};
+
+  /* fn.actions */
+  $scope.fn.actions = {};
+  var actionFuncs = {
+    today: Feed.setToday,
+    star: Feed.setAllStarred,
+    all: Feed.setAll
   };
+  ["today", "star", "all"].forEach(function(action) {
+    $scope.fn.actions[action] = function() {
+      actionFuncs.call(Feed);
+      Feed.setArticle(undefined);
+      $state.go("dashboard.misc", { action: action }, { reload: true });
+    }
+  });
+  $scope.fn.actions.isActive = function(name) {
+    return $stateParams.action === name;
+  };
+
+  /* fn.addTooltip */
   $scope.fn.addTooltip = {
     show: function() {
       $scope.addTooltipActive = true;
@@ -59,6 +62,8 @@ function($scope, $rootScope, $window, $state, $stateParams, Feed, Util) {
       $scope.addTooltipActive = false;
     }
   };
+
+  /* fn.updateForm */
   $scope.fn.updateForm = {
     show: function(feed, $event) {
       console.log("show form");
@@ -78,66 +83,77 @@ function($scope, $rootScope, $window, $state, $stateParams, Feed, Util) {
     },
     submit: function() {
       if (!$scope.selectedFeed ) {
-        // TODO: popup some error tips
-        console.log("no selected Feed");
+        Util.alertError("No selected Feed");
         return;
       }
       var id = $scope.selectedFeed.id;
       var title = $scope.selectedFeed.title;
       if (!id || !title ) {
-        // TODO: popup some error tips
-        console.log("no id or title");
+        Util.alertError("no id or title");
         return;
       }
       $scope.fn.updateForm.hide();
       Feed.updateFeedTitle(id, title,
         function(data, status, headers, config) {
+          Util.alertSuccess("Update title success");
           console.log('update feed title success');
           console.log(data);
         },
         function(data, status, headers, config) {
           if (status === 401) {
-            // TODO: delete token & go back to login page
+            Util.relogin(data.code);
+          } else {
+            var msg = Util.getErrorMessage(data);
+            Util.alertError(msg);
           }
-          console.log('update feed title error');
-          console.log(data);
         }
       );
     }
   };
 
+  /* fn.feed */
   $scope.fn.feed = {
     create: function($event) {
       var url = event.target.value;
       if (event.keyCode === 13) {
         console.log("it's a Enter. check the url please");
-        if (Util.validateURL(url)) {
-          // block other create request...
+        if (Util.validateURL(url) && !$scope.fetchingFeed) {
+          $scope.fetchingFeed = true;           // lock request
           console.log("valid url. Ready to create Feed");
+          Util.alertInfo("Fetching feed, please wait...", null); // persist notice
+          $timeout(function() {
+            $scope.addTooltipActive = false;     // hide tooltip
+          }, 0)
+          event.target.value = '';              // reset
           Feed.create(url,
             function(data, status, headers, config) {
+              Util.alertSuccess("Fetch success!");
               console.log('update feed title success');
               console.log(data);
+              $scope.fetchingFeed = false;      // release lock
               Feed.addFeed(data);
             },
             function(data, status, headers, config) {
               if (status === 401) {
-                // TODO: clear token, back to login
+                Util.relogin(data.code);
+              } else {
+                var msg = Util.getErrorMessage(data);
+                Util.alertError(msg);
               }
+              $scope.fetchingFeed = false;      // release lock
               console.log('update feed title error');
               console.log(data);
             }
           );
         }
       } else {
-        // TODO popup warning
+        Util.alertError("Invalid URL");
         console.log("invalid url!");
       }
     },
     set: function(feed) {
       Feed.setFeed(feed);
       Feed.setArticle(undefined); // clear article-detail section
-      //$scope.t = feed.title;
       $state.go("dashboard.feed", { id: feed.id }, { reload: true });
     },
     delete: function(feed) {
@@ -148,50 +164,55 @@ function($scope, $rootScope, $window, $state, $stateParams, Feed, Util) {
 
       // sync with database
       Feed.delete(feed.id, function(data, status, headers, config) {
-        // TODO: notice
         console.log("delete feed successful");
         console.log(data);
-        $rootScope.$emit("notice", {
-          type: "success",
-          content: "Delete success!"
-        });
+        Util.alertSuccess("Delete success!");
       }, function(data, status, headers, config) {
-        // error
+        if (status === 401) {
+          Util.relogin(data.code);
+        } else {
+          var msg = Util.getErrorMessage(data)
+          Util.alertError(msg);
+        }
         console.log("delete feed failed!!!");
         console.log(data);
       })
     },
+
     /**
      * Refresh all feeds
-     * All ! All feeds !
      */
     refresh: function() {
-      $scope.isRefreshing = true;
-      // provide an array of feed ids
-      var ids = $scope.feeds.map(function(feed) {
-        return feed.id;
-      });
-      Feed.refresh(ids,
-        function(data, status, headers, config) {
-          console.log("refresh success");
-          $scope.isRefreshing = false;
-          console.log(data);
-          //console.log($state.$current.name);
-          // [ { feed_id: xx1, articles: yy1 }, { feed_id: xx2, articles: yy2 }]
-          data.forEach(function(d) {
-            Feed.addArticles(d.feed_id, d.articles);
-          });
-        },
-        function(data, status, headers, config) {
-          if (status === 401) {
-            // TODO: clear token, back to login
+      if (!$scope.refreshingFeed) {
+        // provide an array of feed ids
+        var ids = $scope.feeds.map(function(feed) {
+          return feed.id;
+        });
+        $scope.refreshingFeed = true;         // lock request
+        Util.alertInfo("Refreshing...", null);
+        Feed.refresh(ids,
+          function(data, status, headers, config) {
+            Util.alertSuccess("Refresh success!");
+            $scope.refreshingFeed = false;    // release lock
+            data.forEach(function(d) {
+              Feed.addArticles(d.feed_id, d.articles);
+            });
+            console.log("refresh success");
+            console.log(data);
+          },
+          function(data, status, headers, config) {
+            if (status === 401) {
+              Util.relogin(data.code);
+            } else {
+              var msg = Util.getErrorMessage(data);
+              Util.alertError(msg);
+            }
+            console.log("refresh failed");
+            $scope.refreshingFeed = false;    // release lock
+            console.log(data);
           }
-          console.log("refresh failed");
-          $scope.isRefreshing = false;
-          console.log(data);
-          // TODO
-        }
-      );
+        );
+      }
     },
     isActive: function(feed) {
       return feed.id + '' === $stateParams.id;

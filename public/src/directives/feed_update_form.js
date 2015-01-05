@@ -2,9 +2,7 @@
 var app = angular.module("rssApp");
 
 app.directive('feedUpdateForm', function($document) {
-  var linkFunc = function(scope, elem, attrs) {
-    // TODO: inject scope's current feed's title into <input>
-  }
+  var linkFunc = function(scope, elem, attrs) {};
   return {
     restrict: 'E',
     link: linkFunc,

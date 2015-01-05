@@ -1,5 +1,7 @@
 var app = angular.module('rssApp');
 
+var TIMEOUT_DURATION = 40 * 1000; // 40s
+
 var todayFilter = function(article) {
 
   var date = new Date(article.pub_date);
@@ -82,7 +84,7 @@ function($http, $rootScope, $state, $stateParams, $auth) {
           this.feeds[i].articles = this.feeds[i].articles.concat(articles);
 
           // update list section by emitting events
-          var action = $stateParam.action || "default";
+          var action = $stateParams.action || "default";
 
           console.log('current action: ' + action);
           $rootScope.$emit("addArticles", filters[action](articles));
@@ -143,16 +145,16 @@ function($http, $rootScope, $state, $stateParams, $auth) {
         type: "info",
         content: "Adding feed..."
       });
-      $http.post('api/feeds', { url: url }, { timeout: 20 * 1000 }) // 20s timeout
+      $http.post('api/feeds', { url: url }, { timeout: TIMEOUT_DURATION }) // 20s timeout
         .success(success).error(error);
     },
     delete: function(feedId, success, error) {
       console.log("ready to delete");
-      $http.delete("api/feeds/" + feedId, {}, { timeout: 20 * 1000 })
+      $http.delete("api/feeds/" + feedId, {}, { timeout: TIMEOUT_DURATION })
         .success(success).error(error);
     },
     refresh: function(ids, success, error) {
-      $http.post('api/feeds/refresh', { ids: ids }, { timeout: 20 * 1000 })
+      $http.post('api/feeds/refresh', { ids: ids }, { timeout: TIMEOUT_DURATION })
       .success(success)
       .error(error);
     },

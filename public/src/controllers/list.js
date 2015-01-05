@@ -1,11 +1,24 @@
-angular.module("rssApp").controller("listController", ["$scope", "$state", "$stateParams", "Feed", "Article",
-  function($scope, $state, $stateParams, Feed, Article) {
+angular.module("rssApp").controller("listController", ["$scope", "$rootScope", "$state", "$stateParams", "Feed", "Article", "Util",
+  function($scope, $rootScope, $state, $stateParams, Feed, Article, Util) {
     $scope.articles = Feed.getArticles();
     $scope.feed = Feed.getFeed();
     $scope.setArticle = function(article) {
       // 将Article本身设为已读
       if (!article.readed) {
-        Article.read(article.id);
+        Article.read(article.id, function(data, status) {
+          Util.alertSuccess("Read success!");
+          console.log('read success');
+          console.log(data);
+        }, function(data, status) {
+          if (status === 401) {
+            Util.relogin(data.code);
+          } else {
+            var msg = Util.getErrorMessage(data);
+            Util.alertError(msg);
+          }
+          console.log('read failure');
+          console.log(data);
+        });
       }
       article.readed = true;
       // 修改Feed Service中的feeds数据，同步Feed的状态

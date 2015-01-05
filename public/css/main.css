@@ -75,112 +75,144 @@ header {
   text-shadow: none;
   text-decoration: none;
   padding: 13px 24px 15px;
-  color: rgb(0, 147, 239);
+  color: #3071a9;
   display: block;
 }
   /** Header Ctrl **/
   #header-ctrl {
     float: right;
   }
-  #header-ctrl .nav-list {
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    top: 0;
-    right: 0;
-  }
-  #header-ctrl .nav-list .nav-item {
-    margin: 0;
-    font-size: 0.875em;
-    float: left;
-    list-style: none;
-    border-left: 1px solid #f2f2f2;
-    cursor: pointer;
-    width: 60px;
-    height: 54px;
-    background-color: #fff;
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    background-size: 40px 40px;
-  }
-  #header-ctrl .nav-list .nav-item.mark-as-read {
-    width: 124px;
-    height: 36px;
-    padding: 18px 0 0 48px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 12px;
-    background-position: 8px 50%;
-    background-image: url("/images/top-mark.png");
-  }
-  #header-ctrl .nav-list .nav-item.settings {
-    background-image: url("/images/settings.png");
-  }
-  #header-ctrl .header-nav-tooltip {
-    margin: 4.2em -2px 0 -9em;
-    display: block;
-    position: absolute;
-    z-index: 999;
-    border: 1px solid rgba(0,0,0,0.2);
-    color: #444;
-    font-weight: 400;
-    background-clip: padding;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding;
-    background-clip: padding-box;
-    -moz-bg-clip: padding-box;
-    border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    background-color: #fff;
-    font-size: 13px;
-    padding: 0;
-    right: 0;
-    border-top: 0;
-  }
-  #header-ctrl .header-nav-tooltip:before,
-  #header-ctrl .header-nav-tooltip:after {
-    content: "";
-    position: absolute;
-    border-style: solid outset;
-    display: block;
-    width: 0;
-  }
-  #header-ctrl .header-nav-tooltip:before {
-    top: -10px;
-    left: 135px;
-    border-width: 0 10px 10px;
-    border-color: #bebebe transparent;
-  }
-  #header-ctrl .header-nav-tooltip:after {
-    top: -9px;
-    left: 136px;
-    border-width: 0 9px 9px;
-    border-color: #fff transparent;
-  }
-  .header-nav-tooltip li:first-child {
-    border-radius: 2px 2px 0 0;
-  }
-  .header-nav-tooltip li:first-child+li {
-    border-top: 1px solid #eaeaea;
-  }
-  .header-nav-tooltip li:last-child {
-    border-radius: 0 0 2px 2px;
-  }
-  .header-nav-tooltip .tooltip-list-item {
-    padding: 0;
-    border-bottom: 0;
-    overflow: hidden;
-    list-style: none;
-  }
-  .header-nav-tooltip .tooltip-list-item a {
-    padding: 12px 104px 8px 13px;
-    color: #444;
-    text-decoration: none;
-    text-shadow: 0 1px #fff;
-    display: block;
-  }
+
+    /* header navigation */
+    #header-ctrl .nav-list {
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      top: 0;
+      right: 0;
+    }
+    #header-ctrl .nav-list .nav-item {
+      margin: 0;
+      font-size: 0.875em;
+      float: left;
+      list-style: none;
+      border-left: 1px solid #f2f2f2;
+      cursor: pointer;
+      width: 60px;
+      height: 54px;
+      background-color: #fff;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-size: 40px 40px;
+    }
+    #header-ctrl .nav-list .nav-item.mark-as-read {
+      width: 124px;
+      height: 36px;
+      padding: 18px 0 0 48px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      background-position: 8px 50%;
+      background-image: url("/images/top-mark.png");
+    }
+    #header-ctrl .nav-list .nav-item.settings {
+      background-image: url("/images/settings.png");
+    }
+
+      /* settings tooltip */
+      #header-ctrl .header-nav-tooltip {
+        margin: 4.2em -2px 0 -9em;
+        display: block;
+        position: absolute;
+        z-index: 999;
+        border: 1px solid rgba(0,0,0,0.2);
+        color: #444;
+        font-weight: 400;
+        background-clip: padding;
+        -moz-background-clip: padding;
+        -webkit-background-clip: padding;
+        background-clip: padding-box;
+        -moz-bg-clip: padding-box;
+        border-radius: 2px;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        background-color: #fff;
+        font-size: 13px;
+        padding: 0;
+        right: 0;
+        border-top: 0;
+      }
+      #header-ctrl .header-nav-tooltip:before,
+      #header-ctrl .header-nav-tooltip:after {
+        content: "";
+        position: absolute;
+        border-style: solid outset;
+        display: block;
+        width: 0;
+      }
+      #header-ctrl .header-nav-tooltip:before {
+        top: -10px;
+        left: 135px;
+        border-width: 0 10px 10px;
+        border-color: #bebebe transparent;
+      }
+      #header-ctrl .header-nav-tooltip:after {
+        top: -9px;
+        left: 136px;
+        border-width: 0 9px 9px;
+        border-color: #fff transparent;
+      }
+      .header-nav-tooltip li:first-child {
+        border-radius: 2px 2px 0 0;
+      }
+      .header-nav-tooltip li:first-child+li {
+        border-top: 1px solid #eaeaea;
+      }
+      .header-nav-tooltip li:last-child {
+        border-radius: 0 0 2px 2px;
+      }
+      .header-nav-tooltip .tooltip-list-item {
+        padding: 0;
+        border-bottom: 0;
+        overflow: hidden;
+        list-style: none;
+      }
+      .header-nav-tooltip .tooltip-list-item a {
+        padding: 12px 104px 8px 13px;
+        color: #444;
+        text-decoration: none;
+        text-shadow: 0 1px #fff;
+        display: block;
+      }
+
+    /* header notice */
+    .header-notice {
+      position: absolute;
+      left: 200px;
+      height: 30px;
+      padding: 6px 20px;
+      line-height: 30px;
+      border-radius: 6px;
+      -moz-border-radius: 6px;
+      -webkit-border-radius: 6px;
+      color: #fff;
+      margin-top: 6px;
+      background-color: #3071a9;
+      border: 1px solid #285e8e;
+    }
+    .header-notice.success {
+      background-color: #5cb85c;
+      border-color: #4cae4c;
+    }
+    .header-notice.info {
+      background-color: #5bc0de;
+      border-color: #46b8da;
+    }
+    .header-notice.danger {
+      background-color: #d9534f;
+      border-color: #d43f3a;
+    }
 
   /** Non-login header **/
   #header-ctrl .non-login .nav-item {

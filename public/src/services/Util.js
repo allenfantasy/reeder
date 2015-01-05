@@ -5,6 +5,10 @@ var USER_NOT_FOUND = 2;
 var EXPIRED_TOKEN = 3;
 
 app.factory('Util', ["$state", "$auth", "$rootScope", function($state, $auth, $rootScope) {
+  var defaults = {
+    ALERT_DURATION: 1
+  };
+
   return {
     validateURL: function(url) {
       // Credit to http://regexr.com?37i6s
@@ -23,11 +27,33 @@ app.factory('Util', ["$state", "$auth", "$rootScope", function($state, $auth, $r
       }
       content += "Please login."
       $auth.removeToken();
-      $rootScope.$emit("notice", {
-        type: "info",
-        content: content
-      });
+
+      // BUG: seems this not working..
+      this.alertInfo(content, null); // persistent info
       $state.go("login");
+    },
+    alert: function(type, content, duration) {
+      $rootScope.$emit("notice", {
+        type: type,
+        content: content,
+        duration: (duration !== undefined ? duration : defaults.ALERT_DURATION)
+      });
+    },
+    alertSuccess: function(content, duration) {
+      this.alert("success", content, duration);
+    },
+    alertError: function(content, duration) {
+      this.alert("danger", content, duration);
+    },
+    alertInfo: function(content, duration) {
+      this.alert("info", content, duration);
+    },
+    getErrorMessage: function(data) {
+      if (data && data.message) {
+        return data.message;
+      } else {
+        return "Network error";
+      }
     }
   };
 }]);

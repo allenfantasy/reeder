@@ -24,28 +24,17 @@ angular.module("rssApp").controller("headerController", ["$scope", "$rootScope",
     // control notice
     // notice types: info, success, danger
     $rootScope.$on("notice", function(event, notice) {
-      // BUG: cannot update the view
-      console.log("received noticed");
-      console.log(notice);
-      /*$scope.$apply(function() {
-        $scope.notice = notice;
-      });*/
       $timeout(function() {
         $scope.notice = notice;
       }, 0);
       if (notice.duration) { // hide
-        console.log("hide after some duration");
+        //console.log("hide after some duration");
         $timeout(function() {
           $scope.notice = null;
         }, notice.duration * 1000);
       } else {
-        console.log("no duration. should persist");
+        //console.log("no duration. should persist");
       }
     });
-    /*$scope.$watch("notice", function(newValue, oldValue) {
-      console.log("notice changed");
-      console.log("newValue", newValue);
-      console.log("oldValue", oldValue);
-    });*/
   }
 ]);
