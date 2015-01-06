@@ -15,6 +15,7 @@ import lib.exceptions.InvalidFeedException;
 import lib.exceptions.InvalidRSSFeedException;
 import models.Article;
 import models.Feed;
+import static lib.util.DOMUtil.*;
 
 import org.apache.commons.io.FileUtils;
 import org.w3c.dom.*;
@@ -25,6 +26,13 @@ import org.xml.sax.SAXParseException;
  * It's name a an acronym of "Really Simple Syndication"
  * RSS is dialect of XML. All RSS files must conform XML 1.0 specification.
  * At the top level, a RSS document is a <rss> element, with a mandatory attribute called version.
+ */
+
+/**
+ * RSS feed parser
+ * 
+ * @author allen
+ *
  */
 public class RSSFeedParser extends FeedParser {
   static final String FEED_TYPE = "rss";
@@ -49,7 +57,10 @@ public class RSSFeedParser extends FeedParser {
   	Feed feed = null;
   	File xmlFile = null;
   	try {
-  		String filePath = writeFeed2File();
+  		InputStream inStream = read();
+  		if (inStream == null) {
+    		throw new InvalidRSSFeedException("fail to fetch url inputstream");
+    	}
   		
   		String title;
   		String link;
@@ -59,11 +70,13 @@ public class RSSFeedParser extends FeedParser {
   		String author;
   		String guid;
   		String version = null;
-  		
+
+  		/*String filePath = writeFeed2File();
   		xmlFile = new File(filePath);
   		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
   		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-  		Document doc = dBuilder.parse(xmlFile);
+  		Document doc = dBuilder.parse(xmlFile);*/
+  		Document doc = readXml(inStream);
   		
   		//optional but recommended
   		doc.getDocumentElement().normalize();
@@ -244,7 +257,11 @@ public class RSSFeedParser extends FeedParser {
   	List<Article> articles = new ArrayList<Article>();
   	File xmlFile = null;
   	try {
-  		String filePath = writeFeed2File();
+  		InputStream inStream = read();
+  		if (inStream == null) {
+    		throw new InvalidRSSFeedException("fail to fetch url inputstream");
+    	}
+  		
   		String title;
   		String link;
   		String pubDate;
@@ -252,11 +269,13 @@ public class RSSFeedParser extends FeedParser {
   		String author;
   		String guid;
   		String version = null;
-  				
+
+  		/*String filePath = writeFeed2File();
   		xmlFile = new File(filePath);
   		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
   		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-  		Document doc = dBuilder.parse(xmlFile);
+  		Document doc = dBuilder.parse(xmlFile);*/
+  		Document doc = readXml(inStream);
   		
   		//optional but recommended
   		doc.getDocumentElement().normalize();
