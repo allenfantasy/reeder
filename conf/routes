@@ -26,6 +26,7 @@ POST    /api/articles/read_batch    controllers.ArticlesController.readBatch()
 # Users
 POST    /api/login                  controllers.UsersController.login()
 POST    /api/signup                 controllers.UsersController.register()
+PUT     /api/update_password        controllers.UsersController.updatePassword()
 GET     /api/me                     controllers.UsersController.getProfile()
 PUT     /api/me                     controllers.UsersController.updateProfile()
 

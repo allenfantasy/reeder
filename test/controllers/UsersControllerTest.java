@@ -8,11 +8,11 @@ import java.util.*;
 
 // 3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.*;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.*;
+import com.ning.http.client.providers.jdk.ResponseBodyPart;
 
 import play.mvc.*;
 import play.test.*;
@@ -21,6 +21,7 @@ import play.libs.F.*;
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
 // Custom packages
+import static lib.Util.*;
 import models.*;
 
 public class UsersControllerTest extends ControllerTest {
@@ -28,6 +29,7 @@ public class UsersControllerTest extends ControllerTest {
 	private static final String EMAIL = "allen@dxhackers.com";
 	private static final String USERNAME = "allenfantasy";
 	private static final String PASSWORD = "asglasi476sngl8";
+	private static final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 	
 	@Test
 	public void callLoginSuccess() {
@@ -223,7 +225,7 @@ public class UsersControllerTest extends ControllerTest {
 				try {
 					String token = u.createJWT();
 					final String DUMMY = "dummy";
-					JsonNodeFactory nodeFactory = JsonNodeFactory.instance; // singleton
+					
 					ObjectNode body = nodeFactory.objectNode();
 					body.put("name", DUMMY);
 					
@@ -235,6 +237,41 @@ public class UsersControllerTest extends ControllerTest {
 					u = User.findById(id);
 				  assertThat(u.getName()).isEqualTo(DUMMY);
 
+				} catch (JOSEException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	@Test
+	public void callUpdatePassword() {
+		running(fakeApplication, new Runnable() {
+			
+			@Override
+			public void run() {
+				u = createUser(getUserEmail(), getUserName(), getUserPassword());
+				Long id = u.id;
+				try {
+					String token = u.createJWT();
+					final String DUMMY_PASSWORD = "dummy9138940";
+					ObjectNode body = nodeFactory.objectNode();
+					body.put("password", DUMMY_PASSWORD);
+					
+					Result result = callAction(
+						controllers.routes.ref.UsersController.updatePassword(),
+						fakeRequest().withJsonBody(body).withHeader(getJWTHeader(), getBearerToken(token))
+					);
+					assertThat(status(result)).isEqualTo(OK);
+					// check return token
+					u = User.findById(id);
+					JsonNode resBody = Json.parse(contentAsString(result));
+					assertThat(resBody.get("token").textValue()).isEqualTo(u.createJWT(Calendar.DATE, 7));
+					
+					// check if password is updated
+					u = User.findById(id);
+					assertThat(u.authenticate(DUMMY_PASSWORD)).isTrue();
+					
 				} catch (JOSEException e) {
 					e.printStackTrace();
 				}

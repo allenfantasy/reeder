@@ -76,11 +76,14 @@ angular.module("rssApp")
       strength = Math.max(0, Math.min(100, Math.round(strength)));
       return strength;
     }
+
     return {
       restrict: 'A',
       require: 'ngModel',
       link: function(scope, element, attrs, ngModel) {
         var indicator = element.children();
+
+        var form = element.parent().parent();
 
         var dots = Array.prototype.slice.call(indicator.children());
         var weakest = dots.slice(-1)[0];
@@ -90,8 +93,7 @@ angular.module("rssApp")
 
         element.after(indicator);
 
-        element.bind('keyup', function() {
-
+        function updateDots() {
           angular.forEach(dots, function(el) {
             el.style.backgroundColor = '#ebeef1';
           });
@@ -114,7 +116,15 @@ angular.module("rssApp")
               weakest.style.backgroundColor = '#e01414';
             }
           }
-        });
+        }
+        function resetDots() {
+          angular.forEach(dots, function(el) {
+            el.style.backgroundColor = '#ebeef1';
+          });
+        }
+        form.bind('submit', resetDots);
+        element.bind('keyup', updateDots);
+
         ngModel.$validators.weak = function(modelValue) {
           return !modelValue || (calPasswordStrength(modelValue) > 30);
         }

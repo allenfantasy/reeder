@@ -5,7 +5,7 @@ import java.util.*;
 
 // 3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.*;
 import com.nimbusds.jose.*;
 import play.*;
 import play.libs.Json;
@@ -16,6 +16,7 @@ import models.User;
 import static lib.Util.*;
 
 public class UsersController extends ApplicationController {
+	private static final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 	
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result login() {
@@ -102,6 +103,34 @@ public class UsersController extends ApplicationController {
 		user.setName(name);
 		user.save();
 		return ok();
+	}
+	
+	@With(AuthenticateAction.class)
+	public static Result updatePassword() {
+		User user = getUser();
+		JsonNode reqJson = request().body().asJson();
+		if (reqJson == null) {
+			return badRequest(buildErrorInfo("invalid json format"));
+		}
+		String password = reqJson.findPath("password").textValue();
+		if (password == null) return badRequest(buildErrorInfo("no password"));
+		
+		String error = user.updatePassword(password);
+		
+		if (error == null) {
+			try {
+				ObjectNode resNode = nodeFactory.objectNode();
+			  resNode.put("token", user.createJWT(Calendar.DATE, 7));
+			  return ok(resNode);
+			}
+		  catch (JOSEException e) {
+		  	e.printStackTrace();
+		  	return internalServerError(buildErrorInfo("internal server error"));
+		  }
+		}
+		else {
+			return badRequest(buildErrorInfo(error));			
+		}
 	}
 	
   private static User getUser() {

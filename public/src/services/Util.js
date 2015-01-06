@@ -1,5 +1,6 @@
 var app = angular.module("rssApp");
 
+// TODO: move these into angular constant
 var INVALID_TOKEN = 1;
 var USER_NOT_FOUND = 2;
 var EXPIRED_TOKEN = 3;

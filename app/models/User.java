@@ -9,7 +9,6 @@ import javax.persistence.*;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.*;
-
 import play.data.validation.Constraints.*;
 import play.db.ebean.*;
 
@@ -38,7 +37,9 @@ public class User extends Model {
   // TODO: friends
   
   // static variables / finals
-  private static final String TOKEN = "Reeder"; 
+  private static final String TOKEN = "Reeder";
+  private static final EmailValidator emailValidator = new EmailValidator();
+  private static final PasswordValidator pwdValidator = new PasswordValidator();
   public static final Model.Finder<Long, User> find = new Model.Finder<Long, User>(
   		Long.class, User.class
   );
@@ -85,7 +86,6 @@ public class User extends Model {
   	// name RFCs, and use regular expression recommended by HTML5 spec:
   	// http://www.w3.org/TR/html-markup/datatypes.html#form.data.emailaddress
   	
-  	EmailValidator emailValidator = new EmailValidator();
   	if (!emailValidator.isValid(email)) {
   		return "invalid email format";
   	}
@@ -95,7 +95,6 @@ public class User extends Model {
   		// TODO: refactor this using Play's Constraints' validators
     	// should return different error msg
 
-    	PasswordValidator pwdValidator = new PasswordValidator();
     	if (!pwdValidator.validate(password)) {
     		return "invalid password format";
     	}
@@ -118,6 +117,24 @@ public class User extends Model {
   	}
 
     super.save();
+  }
+
+  /**
+   * update password to database
+   * check password validity, crypt it and save
+   * should call super.save() to avoid issue
+   * 
+   * @param password
+   * @return
+   */
+  public String updatePassword(String password) {
+  	if (!pwdValidator.validate(password)) {
+  		return "Invalid password format";
+  	}
+  	password = cryptWithMD5(password, createdAt, TOKEN);
+  	this.password = password;
+  	super.save();
+  	return null;
   }
   /**
    * authenticate password

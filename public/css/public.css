@@ -220,3 +220,6 @@
 .profile .panel-body .submit-button:hover {
   background-color: rgb(25, 108, 74);
 }
+.profile .panel-body .password-strength-indicator {
+  top: 30px;
+}

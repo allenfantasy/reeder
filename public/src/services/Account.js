@@ -8,8 +8,8 @@ app.factory("Account", ["$http", "$auth", function($http, $auth) {
     updateProfile: function(data) {
       return $http.put("api/me", data);
     },
-    updatePassword: function(password) {
-      // TODO
+    updatePassword: function(data) {
+      return $http.put("api/update_password", data);
     }
   };
 }]);
