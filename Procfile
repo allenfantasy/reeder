@@ -1,1 +1,2 @@
-web: target/universal/stage/bin/my-first-application -Dhttp.port=${PORT} -Dconfig.resource=production.conf
+web: target/start -Dhttp.port=$PORT -DapplyEvolutions.default=true -Ddb.default.driver=org.postgresql.Driver -Ddb.default.url=$DATABASE_URL
+
