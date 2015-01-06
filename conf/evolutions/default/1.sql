@@ -4,7 +4,7 @@
 # --- !Ups
 
 create table article (
-  id                        bigserial not null,
+  id                        bigint not null,
   description               text,
   title                     varchar(255),
   link                      varchar(255),
@@ -18,7 +18,7 @@ create table article (
 ;
 
 create table feed (
-  id                        bigserial not null,
+  id                        bigint not null,
   title                     varchar(255),
   link                      varchar(255),
   source_url                varchar(255),
@@ -31,36 +31,40 @@ create table feed (
   constraint pk_feed primary key (id))
 ;
 
-create table user (
-  id                        bigserial not null,
+create table users (
+  id                        bigint not null,
   email                     varchar(255),
   name                      varchar(255),
   password                  varchar(255),
   created_at                varchar(255),
-  constraint uq_user_email unique (email),
-  constraint pk_user primary key (id))
+  constraint uq_users_email unique (email),
+  constraint pk_users primary key (id))
 ;
+
+create sequence article_seq;
 
 create sequence feed_seq;
 
-alter table article add constraint fk_article_feed_1 foreign key (feed_id) references feed (id) on delete restrict on update restrict;
+create sequence users_seq;
+
+alter table article add constraint fk_article_feed_1 foreign key (feed_id) references feed (id);
 create index ix_article_feed_1 on article (feed_id);
-alter table feed add constraint fk_feed_user_2 foreign key (user_id) references user (id) on delete restrict on update restrict;
+alter table feed add constraint fk_feed_user_2 foreign key (user_id) references users (id);
 create index ix_feed_user_2 on feed (user_id);
 
 
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+drop table if exists article cascade;
 
-drop table if exists article;
+drop table if exists feed cascade;
 
-drop table if exists feed;
+drop table if exists users cascade;
 
-drop table if exists user;
-
-SET REFERENTIAL_INTEGRITY TRUE;
+drop sequence if exists article_seq;
 
 drop sequence if exists feed_seq;
+
+drop sequence if exists users_seq;
 

@@ -16,7 +16,9 @@ import play.db.ebean.*;
 import static lib.Util.*;
 import lib.util.PasswordValidator;
 
+
 @Entity
+@Table(name="users")
 public class User extends Model {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
