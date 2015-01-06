@@ -6,11 +6,9 @@ import javax.persistence.EntityNotFoundException;
 
 // 3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.JsonNode;
-
 import play.*;
 import play.libs.Json;
 import play.mvc.*;
-
 import com.avaje.ebean.*;
 
 // Custom packages
