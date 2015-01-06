@@ -116,15 +116,10 @@ function($scope, $rootScope, $state, $stateParams, $timeout, Feed, Util) {
     create: function($event) {
       var url = event.target.value;
       if (event.keyCode === 13) {
-        console.log("it's a Enter. check the url please");
         if (Util.validateURL(url) && !$scope.fetchingFeed) {
           $scope.fetchingFeed = true;           // lock request
-          console.log("valid url. Ready to create Feed");
-          Util.alertInfo("Fetching feed, please wait...", null); // persist notice
-          $timeout(function() {
-            $scope.addTooltipActive = false;     // hide tooltip
-          }, 0)
           event.target.value = '';              // reset
+          Util.alertInfo("Fetching feed, please wait...", null); // persist notice
           Feed.create(url,
             function(data, status, headers, config) {
               Util.alertSuccess("Fetch success!");
@@ -132,6 +127,9 @@ function($scope, $rootScope, $state, $stateParams, $timeout, Feed, Util) {
               console.log(data);
               $scope.fetchingFeed = false;      // release lock
               Feed.addFeed(data);
+              $timeout(function() {
+                $scope.addTooltipActive = false;     // hide tooltip
+              }, 0);
             },
             function(data, status, headers, config) {
               if (status === 401) {
@@ -143,6 +141,9 @@ function($scope, $rootScope, $state, $stateParams, $timeout, Feed, Util) {
               $scope.fetchingFeed = false;      // release lock
               console.log('update feed title error');
               console.log(data);
+              $timeout(function() {
+                $scope.addTooltipActive = false;     // hide tooltip
+              }, 0);
             }
           );
         }

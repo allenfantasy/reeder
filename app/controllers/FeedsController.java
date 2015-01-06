@@ -237,7 +237,7 @@ public class FeedsController extends Controller {
   	try {
   		
   		FeedParser parser = factory.createFeedParser(feed.getSourceURL());
-  		parser.writeFeed2File();
+  		//parser.writeFeed2File();
   		List<Article> articles = parser.fetchLatestArticles(feed); // here feed is updated
 
   		for(Article article : articles) {

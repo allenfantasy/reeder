@@ -1,23 +1,15 @@
 package lib.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import lib.exceptions.InvalidAtomFeedException;
-import lib.exceptions.InvalidFeedException;
-import models.Article;
-import models.Feed;
-
-import org.apache.commons.io.FileUtils;
 import org.w3c.dom.*;
+import org.xml.sax.SAXParseException;
+
+import lib.exceptions.*;
+import static lib.util.DOMUtil.*;
+import models.*;
 
 public class AtomFeedParser extends FeedParser {
   static final String FEED_TYPE = "atom";
@@ -42,7 +34,10 @@ public class AtomFeedParser extends FeedParser {
   	Feed feed = null;
   	File xmlFile = null;
   	try {
-  		String filePath = writeFeed2File();  // throws InvalidAtomFeedException
+  		InputStream inStream = read();
+  		if (inStream == null) {
+  			throw new InvalidRSSFeedException("fail to fetch url inputstream");
+  		}
   		
   		/*
   		 * Atom Format (RFC4287)
@@ -68,10 +63,7 @@ public class AtomFeedParser extends FeedParser {
   		
   		String linkHref;
   		
-  		xmlFile = new File(filePath);
-  		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-  		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-  		Document doc = dBuilder.parse(xmlFile);
+  		Document doc = readXml(inStream);
   		
   		// optional but recommended
   		doc.getDocumentElement().normalize();
@@ -194,6 +186,10 @@ public class AtomFeedParser extends FeedParser {
   		InvalidFeedException exception = new InvalidAtomFeedException(e.getMessage());
   		exception.initCause(e);
   		throw exception;
+  	} catch (SAXParseException e) {
+  		InvalidFeedException exception = new InvalidAtomFeedException("invalid xml document");
+  		exception.initCause(e);
+  		throw exception;
   	} catch (Exception e) {
   		InvalidFeedException exception = new InvalidAtomFeedException(e.getMessage());
   		exception.initCause(e);
@@ -209,15 +205,15 @@ public class AtomFeedParser extends FeedParser {
   	List<Article> articles = new ArrayList<Article>();
   	File xmlFile = null;
   	try {
-  		String filePath = writeFeed2File(); // throws InvalidAtomFeedException
+  		InputStream inStream = read();
+  		if (inStream == null) {
+    		throw new InvalidRSSFeedException("fail to fetch url inputstream");
+    	}
   		
   		String author = null;    		// <author> -> <name>
   		String pubDate;
   		
-  		xmlFile = new File(filePath);
-  		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-  		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-  		Document doc = dBuilder.parse(xmlFile);
+  		Document doc = readXml(inStream);
   		
   		// optional but recommended
   		doc.getDocumentElement().normalize();
@@ -315,27 +311,6 @@ public class AtomFeedParser extends FeedParser {
   	feed.save(); // update feed
   	
   	return articles;
-  }
-  
-  public String writeFeed2File() throws InvalidFeedException {
-  	String filePath = generateRandomFilepath();
-  	InputStream inStream = read();
-  	File targetFile;
-  	if (inStream == null) {
-  		throw new InvalidAtomFeedException("fail to fetch url inputstream");
-  	}
-  	try {
-  		targetFile = new File(filePath);
-  		if (!targetFile.exists()) targetFile.createNewFile();
-  	} catch (IOException e) {
-  		throw new InvalidAtomFeedException("cannot create file");
-  	}
-  	try {
-  		FileUtils.copyInputStreamToFile(inStream, targetFile);
-  	} catch (IOException e) {
-  		throw new InvalidAtomFeedException("cannot read inputstream to file");
-  	}
-  	return filePath;
   }
   
   public String getSourceURL() {

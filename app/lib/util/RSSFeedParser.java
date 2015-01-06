@@ -1,23 +1,13 @@
 package lib.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import lib.exceptions.InvalidFeedException;
-import lib.exceptions.InvalidRSSFeedException;
-import models.Article;
-import models.Feed;
+import lib.exceptions.*;
+import models.*;
 import static lib.util.DOMUtil.*;
 
-import org.apache.commons.io.FileUtils;
 import org.w3c.dom.*;
 import org.xml.sax.SAXParseException;
 
@@ -71,11 +61,6 @@ public class RSSFeedParser extends FeedParser {
   		String guid;
   		String version = null;
 
-  		/*String filePath = writeFeed2File();
-  		xmlFile = new File(filePath);
-  		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-  		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-  		Document doc = dBuilder.parse(xmlFile);*/
   		Document doc = readXml(inStream);
   		
   		//optional but recommended
@@ -270,11 +255,6 @@ public class RSSFeedParser extends FeedParser {
   		String guid;
   		String version = null;
 
-  		/*String filePath = writeFeed2File();
-  		xmlFile = new File(filePath);
-  		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-  		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-  		Document doc = dBuilder.parse(xmlFile);*/
   		Document doc = readXml(inStream);
   		
   		//optional but recommended
@@ -374,56 +354,6 @@ public class RSSFeedParser extends FeedParser {
   	feed.save(); // update feed
   	System.out.println(feed.getArticles().size());
 	  return articles;
-  }
-  
-  /**
-   * Fetch feed content and store it into a file
-   * Return the filePath thus the caller could use it
-   * to get the content of the file
-   */
-  public String writeFeed2File() throws InvalidFeedException {
-  	// PLAN A
-  	/*InputStream inStream = read();
-  	BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
-    String inputLine;
-  	File targetFile = new File(XML_FILENAME);
-  	if (!targetFile.exists()) targetFile.createNewFile();
-  	OutputStream outStream = new FileOutputStream(targetFile);
-  	
-    while ((inputLine = in.readLine()) != null) {
-    	byte[] bytes = inputLine.getBytes();
-    	outStream.write(bytes);
-    }
-  	try {
-    	in.close();
-    	inStream.close();
-    	outStream.close();
-  	} catch (IOException e) {
-  		e.printStackTrace();
-  	}*/
-
-  	// PLAN B
-  	String filePath = generateRandomFilepath();
-  	InputStream inStream = read();
-  	File targetFile;
-  	if (inStream == null) {
-  		throw new InvalidRSSFeedException("fail to fetch url inputstream");
-  	}
-  	
-  	try {
-  		targetFile = new File(filePath);
-    	if (!targetFile.exists()) targetFile.createNewFile();
-  	} catch (IOException e) {
-  		throw new InvalidRSSFeedException("cannot create file");
-  	}
-
-  	try {
-  		FileUtils.copyInputStreamToFile(inStream, targetFile);
-  	} catch (IOException e) {
-  		System.out.println(e.getMessage());
-  		throw new InvalidRSSFeedException("cannot read inputstream to file");
-  	}
-  	return filePath;
   }
   
   public String getSourceURL() {

@@ -28,7 +28,7 @@
     <div class="add-btn">
       <div class="add-btn-label" hide-tooltip="fn.addTooltip.hide()" ng-click="fn.addTooltip.show()">
         <!-- NOTE: we only need to call hide() once. Check comments in directives/hide_tooltip.js -->
-        <div class="label-inner">Add</div>
+        <div class="label-inner" ng-class="{rotating: fetchingFeed}">Add</div>
       </div>
       <div class="tooltip-add" hide-tooltip="" ng-show="addTooltipActive">
         <ul class="tooltip-list">

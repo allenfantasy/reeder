@@ -355,6 +355,8 @@ header {
       background: #7a7a7a;
       -webkit-mask-image: url("/images/refresh.svg");
     }
+
+    .add-btn .add-btn-label .label-inner.rotating:before,
     .refresh-btn .refresh-btn-label .label-inner.rotating:before {
       -webkit-animation: rotating 1s linear infinite;
     }
@@ -641,14 +643,38 @@ feed-update-form {
         padding: 2px 8px;
       }
       feed-update-form .form input[type="submit"] {
-        margin-top: 6px;
+        position: absolute;
+        top: 70px;
+        right: 20px;
         display: inline-block;
         float: right;
         background-color: #4472B9;
         padding: 2px 10px;
+        width: 60px;
         height: 36px;
+        box-sizing: content-box;
         color: white;
       }
       feed-update-form .form input[type="submit"]:hover {
         background-color: #29446e;
       }
+      feed-update-form button {
+        box-sizing: content-box;
+        padding: 2px 10px;
+        border: 1px solid transparent;
+        width: 60px;
+        height: 36px;
+      }
+      feed-update-form button.danger {
+        position: absolute;
+        right: 20px;
+        bottom: 30px;
+        background-color: #d9534f;
+        border-color: #d43f3a;
+        color: #fff;
+      }
+      feed-update-form button.danger:hover {
+        background-color: #c9302c;
+        border-color: #ac2925;
+      }
+
