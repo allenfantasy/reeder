@@ -210,12 +210,6 @@ public class FeedsController extends Controller {
   @BodyParser.Of(BodyParser.Json.class)
   public static Result read(Long id) {
   	try {
-  		/*Feed feed = Feed.findById(id);
-  		Set<Article> articles = feed.getArticles();
-  		for(Article a : articles) {
-  			// TODO do this in batch. one by one is tooooo bad.
-  			a.read();
-  		}*/
   		String readSql = "UPDATE article SET is_readed=1 WHERE feed_id = :id";
   		SqlUpdate readArticles = Ebean.createSqlUpdate(readSql);
   		readArticles.setParameter("id", id);
