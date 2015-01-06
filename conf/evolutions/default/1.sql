@@ -4,7 +4,7 @@
 # --- !Ups
 
 create table article (
-  id                        bigint auto_increment not null,
+  id                        bigserial not null,
   description               text,
   title                     varchar(255),
   link                      varchar(255),
@@ -18,7 +18,7 @@ create table article (
 ;
 
 create table feed (
-  id                        bigint not null,
+  id                        bigserial not null,
   title                     varchar(255),
   link                      varchar(255),
   source_url                varchar(255),
@@ -32,7 +32,7 @@ create table feed (
 ;
 
 create table user (
-  id                        bigint auto_increment not null,
+  id                        bigserial not null,
   email                     varchar(255),
   name                      varchar(255),
   password                  varchar(255),
