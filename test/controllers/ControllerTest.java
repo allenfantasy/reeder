@@ -29,12 +29,10 @@ public abstract class ControllerTest {
 	@Before
 	public void startFakeApplication() {
 		fakeApplication = fakeApplication();
-		//System.out.println("ControllerTest#start");
 	}
 
   @After
   public void shutdownFakeApplication() {
-		//System.out.println("ControllerTest#shutdown");
   	stop(fakeApplication);
   }
 
@@ -74,7 +72,7 @@ public abstract class ControllerTest {
 	  removeAllArticles.execute();
 	  SqlUpdate removeAllFeeds = Ebean.createSqlUpdate("DELETE FROM feed");
 	  removeAllFeeds.execute();
-	  SqlUpdate removeAllUsers = Ebean.createSqlUpdate("DELETE FROM user");
+	  SqlUpdate removeAllUsers = Ebean.createSqlUpdate("DELETE FROM users");
 	  removeAllUsers.execute();
 	}
 	protected String doubleQuotify(String str) {

@@ -1,8 +1,7 @@
-package lib;
+package lib.util;
 
 // Java built-in packages
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.util.*;
 
 // 3rd Party's packages (include Play)
@@ -11,6 +10,7 @@ import play.libs.Json;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
+ * Util
  * Static utility helpers
  * 
  * @author allen
@@ -41,7 +41,7 @@ public class Util {
   }
   
   /**
-   * digest password from plain-text using MD5
+   * Digest password from plain-text using MD5
    * @param pass
    * @return digested password
    */
@@ -65,7 +65,7 @@ public class Util {
   }
   
   /**
-	 * build error info object
+	 * Build error info object
 	 * @param msg
 	 * @return
 	 */

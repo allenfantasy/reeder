@@ -1,13 +1,13 @@
 package models;
 
+// Java built-in packages
 import java.util.*;
-
 import org.junit.*;
 
+// 3rd Party's packages (including Play)
 import play.mvc.*;
 import play.test.*;
 import static org.fest.assertions.Assertions.*;
-import models.*;
 
 public class ArticleTest extends ModelTest {
 	private static final String AUTHOR_A = "allen";

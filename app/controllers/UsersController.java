@@ -13,11 +13,16 @@ import play.mvc.*;
 
 // Custom packages
 import models.User;
-import static lib.Util.*;
+import static lib.util.Util.*;
 
 public class UsersController extends ApplicationController {
 	private static final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 	
+	/**
+	 * Login
+	 * 
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result login() {
 		JsonNode reqJson = request().body().asJson();
@@ -54,6 +59,11 @@ public class UsersController extends ApplicationController {
 		} 
 	}
 	
+	/**
+	 * Register
+	 * 
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result register() {
 		JsonNode reqJson = request().body().asJson();
@@ -82,6 +92,11 @@ public class UsersController extends ApplicationController {
 		}
 	}
 	
+	/**
+	 * Get the profile of authenticated user
+	 * 
+	 * @return
+	 */
 	@With(AuthenticateAction.class)
 	public static Result getProfile() {
 		User user = getUser();
@@ -90,6 +105,11 @@ public class UsersController extends ApplicationController {
 		return ok(info);
 	}
 	
+	/**
+	 * Update the profile of authenticated user
+	 * 
+	 * @return
+	 */
 	@With(AuthenticateAction.class)
 	public static Result updateProfile() {
 		User user = getUser();
@@ -105,6 +125,11 @@ public class UsersController extends ApplicationController {
 		return ok();
 	}
 	
+	/**
+	 * Update the password of authenticated user
+	 * 
+	 * @return
+	 */
 	@With(AuthenticateAction.class)
 	public static Result updatePassword() {
 		User user = getUser();

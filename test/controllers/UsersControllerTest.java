@@ -20,8 +20,8 @@ import play.libs.*;
 import play.libs.F.*;
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
-// Custom packages
-import static lib.Util.*;
+import static lib.util.Util.*;
+import lib.util.AtomFeedParser;
 import models.*;
 
 public class UsersControllerTest extends ControllerTest {
@@ -37,6 +37,7 @@ public class UsersControllerTest extends ControllerTest {
 			
 			@Override
 			public void run() {
+				cleanupDatabase();
 				createUser(EMAIL, USERNAME, PASSWORD);
 				String bodyString = String.format(
 						"{`email`:`%s`,`password`:`%s`}", EMAIL, PASSWORD);
@@ -66,7 +67,6 @@ public class UsersControllerTest extends ControllerTest {
 				} catch (JOSEException e) {
 					e.printStackTrace();
 				}
-				cleanupDatabase();
 			}
 		});
 	}
@@ -77,6 +77,7 @@ public class UsersControllerTest extends ControllerTest {
 			
 			@Override
 			public void run() {
+				cleanupDatabase();
 				createUser(EMAIL, USERNAME, PASSWORD);
 				
 				String bodyString;
@@ -109,8 +110,6 @@ public class UsersControllerTest extends ControllerTest {
 				assertThat(status(result)).isEqualTo(BAD_REQUEST);
 				assertThat(resultNode.get("message").textValue())
 								.isEqualTo("Invalid password");
-				
-				cleanupDatabase();
 			}
 		});
 	}
@@ -128,6 +127,8 @@ public class UsersControllerTest extends ControllerTest {
 			
 			@Override
 			public void run() {
+				cleanupDatabase();
+				
 				JsonNode body;
 				JsonNode resultNode;
 				Result result;
@@ -144,7 +145,6 @@ public class UsersControllerTest extends ControllerTest {
 				System.out.println(contentAsString(result));
 				assertThat(status(result)).isEqualTo(OK);
 
-				
 				// Case: invalid - email already exists
 				result = callAction(
 					controllers.routes.ref.UsersController.register(),
@@ -195,6 +195,7 @@ public class UsersControllerTest extends ControllerTest {
 
 			@Override
 			public void run() {
+				cleanupDatabase();
 				u = createUser(getUserEmail(), getUserName(), getUserPassword());
 				try {
 					String token = u.createJWT();
@@ -220,6 +221,7 @@ public class UsersControllerTest extends ControllerTest {
 			
 			@Override
 			public void run() {
+				cleanupDatabase();
 				u = createUser(getUserEmail(), getUserName(), getUserPassword());
 				Long id = u.id;
 				try {
@@ -250,6 +252,7 @@ public class UsersControllerTest extends ControllerTest {
 			
 			@Override
 			public void run() {
+				cleanupDatabase();
 				u = createUser(getUserEmail(), getUserName(), getUserPassword());
 				Long id = u.id;
 				try {

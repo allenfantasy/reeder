@@ -25,6 +25,7 @@ public class ArticlesControllerTest extends ControllerTest {
 			@Override
 			public void run() {
 				try {
+					cleanupDatabase();
 					String token;
 					u = createUser(getUserEmail(), getUserName(), getUserPassword());
 					u.addFeeds(createSomeFeeds());
@@ -39,7 +40,6 @@ public class ArticlesControllerTest extends ControllerTest {
 					if (articlesNode.isArray()) {
 						assertThat(articlesNode.size()).isGreaterThan(0);
 					}
-					cleanupDatabase();
 				} catch (JOSEException e) {
 					e.printStackTrace();
 				}
@@ -54,6 +54,7 @@ public class ArticlesControllerTest extends ControllerTest {
 			@Override
 			public void run() {
 				try {
+					cleanupDatabase();
 					String token;
 					u = createUser(getUserEmail(), getUserName(), getUserPassword());
 					u.addFeeds(createSomeFeeds());
@@ -68,7 +69,6 @@ public class ArticlesControllerTest extends ControllerTest {
 					);
 					article = Article.findById(id);
 					assertThat(article.isReaded()).isEqualTo(true);
-					cleanupDatabase();
 				} catch (JOSEException e) {
 					e.printStackTrace();
 				}
@@ -83,6 +83,7 @@ public class ArticlesControllerTest extends ControllerTest {
 			@Override
 			public void run() {
 				try {
+					cleanupDatabase();
 					String token;
 					u = createUser(getUserEmail(), getUserName(), getUserPassword());
 					u.addFeeds(createSomeFeeds());
@@ -102,7 +103,6 @@ public class ArticlesControllerTest extends ControllerTest {
 					);
 					article = Article.findById(id);
 					assertThat(article.isReaded()).isEqualTo(false);
-					cleanupDatabase();
 				} catch (JOSEException e) {
 					e.printStackTrace();
 				}
@@ -117,6 +117,7 @@ public class ArticlesControllerTest extends ControllerTest {
 			@Override
 			public void run() {
 				try {
+					cleanupDatabase();
 					String token;
 					Result result;
 					u = createUser(getUserEmail(), getUserName(), getUserPassword());
@@ -177,8 +178,6 @@ public class ArticlesControllerTest extends ControllerTest {
 					resultNode = Json.parse(contentAsString(result));
 					assertThat(resultNode.get("message").textValue())
 								.isEqualTo("no ids provided");
-					
-					cleanupDatabase();
 				} catch (JOSEException e) {
 					e.printStackTrace();
 				}	

@@ -2,21 +2,22 @@ package controllers;
 
 // Java built-in packages
 import java.util.*;
+
 import org.junit.*;
 
 // 3rd Party packages (include Play)
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nimbusds.jose.JOSEException;
+
 import play.mvc.*;
 import play.test.*;
 import play.libs.*;
 import play.libs.F.*;
 import static play.test.Helpers.*;
 import static org.fest.assertions.Assertions.*;
-
 // Custom packages
 import models.*;
-import lib.Util.*;
+import lib.util.Util.*;
 
 public class FeedsControllerTest extends ControllerTest {
 	protected static User u;
@@ -27,6 +28,7 @@ public class FeedsControllerTest extends ControllerTest {
 			
 			@Override
 			public void run() {
+				cleanupDatabase();
 				try {
 					String token;
 					JsonNode resultNode;
@@ -65,8 +67,6 @@ public class FeedsControllerTest extends ControllerTest {
 				  );
 				  resultNode = Json.parse(contentAsString(result));
 				  assertThat(status(result)).isEqualTo(OK);
-				  
-
 				} catch (JOSEException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {
@@ -75,12 +75,13 @@ public class FeedsControllerTest extends ControllerTest {
 			}
 		});
 	}
-	
+
   @Test
   public void callIndex() {
   	running(fakeApplication, new Runnable() {
   		@Override
 			public void run() {
+  			cleanupDatabase();
   			u = createUser(getUserEmail(), getUserName(), getUserPassword());
   			List<Feed> feeds = createSomeFeeds();
   			u.addFeeds(feeds);
@@ -137,6 +138,7 @@ public class FeedsControllerTest extends ControllerTest {
   	  @Override
   	  public void run() {
   	  	try {
+  	  		cleanupDatabase();
     	  	String token;
   				Result result;
   				u = createUser(getUserEmail(), getUserName(), getUserPassword());
@@ -172,6 +174,7 @@ public class FeedsControllerTest extends ControllerTest {
   		@Override
   		public void run() {
   			try {
+  				cleanupDatabase();
     			String token;
   				Result result;
   				u = createUser(getUserEmail(), getUserName(), getUserPassword());
@@ -208,6 +211,7 @@ public class FeedsControllerTest extends ControllerTest {
   	  @Override
   	  public void run() {
   	  	try {
+  	  		cleanupDatabase();
   	  		String token;
   				Result result;
   				u = createUser(getUserEmail(), getUserName(), getUserPassword());
@@ -237,6 +241,7 @@ public class FeedsControllerTest extends ControllerTest {
   	  @Override
   	  public void run() {
   	  	try {
+  	  		cleanupDatabase();
     	  	String token;
   				Result result;
   				u = createUser(getUserEmail(), getUserName(), getUserPassword());
@@ -272,6 +277,7 @@ public class FeedsControllerTest extends ControllerTest {
   	running(fakeApplication, new Runnable() {
   		@Override
   		public void run() {
+				cleanupDatabase();
   			try {
   	  		String token;
   				Result result;
@@ -315,7 +321,7 @@ public class FeedsControllerTest extends ControllerTest {
   	running(fakeApplication, new Runnable() {
   		@Override
   		public void run() {
-  			createSomeFeeds();
+  			//createSomeFeeds();
   			
   			// TODO: there are some problems...
   			

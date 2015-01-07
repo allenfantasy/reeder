@@ -2,10 +2,10 @@ package controllers;
 
 // Java built-in packages
 import java.util.*;
-import javax.persistence.EntityNotFoundException;
 
 // 3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.JsonNode;
+import javax.persistence.EntityNotFoundException;
 import play.*;
 import play.libs.Json;
 import play.mvc.*;
@@ -13,11 +13,15 @@ import com.avaje.ebean.*;
 
 // Custom packages
 import models.Article;
-import static lib.Util.*;
+import static lib.util.Util.*;
 
 @With(AuthenticateAction.class)
 public class ArticlesController extends Controller {
   
+	/**
+	 * Get all articles
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result index() {
 		List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
@@ -30,6 +34,10 @@ public class ArticlesController extends Controller {
 		return ok(json);
 	}
 	
+	/**
+	 * Get all starred articles
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result starredIndex() {
 		List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
@@ -42,6 +50,11 @@ public class ArticlesController extends Controller {
 		return ok(json);
 	}
 
+	/**
+	 * Read an article
+	 * @param id
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result read(Long id) {
 		try {
@@ -55,6 +68,11 @@ public class ArticlesController extends Controller {
 		}
 	}
 	
+	/**
+	 * Unread an article
+	 * @param id
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result unread(Long id) {
 		try {
@@ -68,6 +86,10 @@ public class ArticlesController extends Controller {
 		}
 	}
 	
+	/**
+	 * Read a sequence of Articles
+	 * @return
+	 */
 	public static Result readBatch() {
 		try {
 			JsonNode jsonParams = request().body().asJson();
@@ -80,7 +102,7 @@ public class ArticlesController extends Controller {
 			}
 			
 			Iterator<JsonNode> iter = idsNode.iterator();
-			String updateSql = "UPDATE article SET is_readed=1 WHERE id in (";
+			String updateSql = "UPDATE article SET is_readed=TRUE WHERE id in (";
 			
 			// do something only when not empty
 			if (iter.hasNext()) {
@@ -111,6 +133,11 @@ public class ArticlesController extends Controller {
 		return TODO;
 	}
 	
+	/**
+	 * Star an article
+	 * @param id
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result star(Long id) {
 		try {
@@ -124,6 +151,11 @@ public class ArticlesController extends Controller {
 		}
 	}
 	
+	/**
+	 * Unstar an article
+	 * @param id
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result unstar(Long id) {
 		try {

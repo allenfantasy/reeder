@@ -1,12 +1,12 @@
 package models;
 
+// Java built-in packages
 import java.util.*;
 
+// 3rd Party's packages (including Play)
 import play.db.ebean.*;
 import play.data.validation.Constraints.*;
-
 import javax.persistence.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity

@@ -44,7 +44,7 @@ function($scope, $rootScope, $state, $stateParams, $timeout, Feed, Util) {
   };
   ["today", "star", "all"].forEach(function(action) {
     $scope.fn.actions[action] = function() {
-      actionFuncs.call(Feed);
+      actionFuncs[action].call(Feed);
       Feed.setArticle(undefined);
       $state.go("dashboard.misc", { action: action }, { reload: true });
     }

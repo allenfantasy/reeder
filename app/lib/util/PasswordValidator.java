@@ -1,7 +1,7 @@
 package lib.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+// Java built-in packages
+import java.util.regex.*;
 
 /**
  * Password Validator
@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
  * @author allen
  *
  */
-// TODO: test this validator
 public class PasswordValidator {
+	//TODO: test this validator
 	private Pattern pattern;
 	private Matcher matcher;
 	

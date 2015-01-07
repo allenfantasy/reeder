@@ -1,14 +1,16 @@
 package models;
 
-import javax.persistence.PersistenceException;
-
+//Java built-in packages
 import org.junit.*;
 
+// 3rd Party's packages (including Play)
+import javax.persistence.PersistenceException;
 import play.mvc.*;
 import play.test.*;
 import static org.fest.assertions.Assertions.*;
+
+// Custom packages
 import lib.util.*;
-import models.*;
 
 public class UserTest extends ModelTest {
 	private static final String EMAIL = "allen@dxhackers.com";

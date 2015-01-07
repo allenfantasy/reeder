@@ -1,34 +1,48 @@
 package lib.util;
 
-import java.io.IOException;
-import java.io.File;
-import java.io.InputStream;
+// Java built-in packages
 import java.net.MalformedURLException;
-import java.net.URL;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
-
+/**
+ * FeedParserFactory
+ * Accept a source URL and build RSSFeedParser / AtomFeedParser based on content type.
+ * 
+ * @author allen
+ *
+ */
 public class FeedParserFactory {
 	public FeedParserFactory() {
 		
 	}
 
+	/**
+	 * factory method
+	 * 
+	 * @return
+	 */
 	public static FeedParserFactory newInstance() {
   	return new FeedParserFactory();
   }
-	
+
+	/**
+	 * Build feed parser
+	 * 
+	 * @param url source URL
+	 * @return FeedParser object
+	 * @throws MalformedURLException
+	 */
   public FeedParser createFeedParser(String url) throws MalformedURLException {
     return isAtom(url) ? new AtomFeedParser(url) : new RSSFeedParser(url);
   }
   
-  /*
-   * Source: http://stackoverflow.com/questions/7591097/determining-whether-a-feed-is-atom-or-rss
+  /**
+   * Check if the source is atom.
+   * Refer: http://stackoverflow.com/questions/7591097/determining-whether-a-feed-is-atom-or-rss
+   * 
+   * @param url source URL
+   * @return
    */
   private boolean isAtom(String url) {
   	try {

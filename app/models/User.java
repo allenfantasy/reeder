@@ -3,19 +3,17 @@ package models;
 // Java built-in packages
 import java.util.*;
 
-import javax.persistence.*;
-
 // 3rd Party's packages (include Play)
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.*;
+import javax.persistence.*;
 import play.data.validation.Constraints.*;
 import play.db.ebean.*;
 
 // Custom packages
-import static lib.Util.*;
+import static lib.util.Util.*;
 import lib.util.PasswordValidator;
-
 
 @Entity
 @Table(name="users")

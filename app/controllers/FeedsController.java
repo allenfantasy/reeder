@@ -4,11 +4,11 @@ package controllers;
 import java.util.*;
 import java.net.*;
 import java.io.*;
-import javax.persistence.*;
 
 //3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.*;
 import com.avaje.ebean.*;
+import javax.persistence.*;
 import play.*;
 import play.libs.Json;
 import play.mvc.*;
@@ -18,11 +18,16 @@ import play.libs.F.*;
 import models.*;
 import lib.util.*;
 import lib.exceptions.*;
-import static lib.Util.*;
+import static lib.util.Util.*;
 
 @With(AuthenticateAction.class)
 public class FeedsController extends Controller {
 	
+	/**
+	 * Get all feeds of the authenticated user
+	 * 
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
   public static Result index() {
 		User user = getUser();
@@ -37,6 +42,11 @@ public class FeedsController extends Controller {
   	return ok(json);
   }
 
+	/**
+	 * Create a feed from URL in request body
+	 * 
+	 * @return
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Promise<Result> create() {
     Promise<Result> promise = Promise.promise(
@@ -86,6 +96,12 @@ public class FeedsController extends Controller {
     });
 	}
 	
+	/**
+	 * Get a feed
+	 * 
+	 * @param id
+	 * @return
+	 */
   public static Result show(Long id) {
   	try {
   		Feed feed = Feed.findById(id);
@@ -103,6 +119,7 @@ public class FeedsController extends Controller {
 	
   /**
    * update Feed's title ONLY
+   * 
    * @param id
    * @return
    */
@@ -122,8 +139,13 @@ public class FeedsController extends Controller {
 		}
   }
 
+	/**
+	 * Delete a feed (and it's all articles)
+	 * 
+	 * @param id
+	 * @return
+	 */
   public static Result delete(Long id) {
-  	System.out.println("before deleting feed");
   	try {
   		Feed.delete(id);
   		return ok();
@@ -137,6 +159,12 @@ public class FeedsController extends Controller {
   	}
   }
   
+  /**
+   * Refresh a feed
+   * 
+   * @param id
+   * @return
+   */
   @BodyParser.Of(BodyParser.Json.class)
   public static Result refresh(Long id) {
   	try {
@@ -157,6 +185,11 @@ public class FeedsController extends Controller {
   	}
   }
   
+  /**
+   * Refresh all feeds of the authenticated user
+   * 
+   * @return
+   */
   @BodyParser.Of(BodyParser.Json.class)
 	public static Promise<Result> refreshAll() {
     Promise<Result> promise = Promise.promise(
@@ -205,7 +238,10 @@ public class FeedsController extends Controller {
 	}
   
   /**
-   * Set all articles under a feed into 'readed'
+   * Set all articles of a feed readed
+   * 
+   * @param id
+   * @return
    */
   @BodyParser.Of(BodyParser.Json.class)
   public static Result read(Long id) {

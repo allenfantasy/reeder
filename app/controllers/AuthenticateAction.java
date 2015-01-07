@@ -3,21 +3,20 @@ package controllers;
 //Java built-in packages
 import java.util.*;
 
-import com.avaje.ebeaninternal.server.lib.DaemonScheduleThreadPool;
 // 3rd Party's packages (include Play)
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nimbusds.jwt.*;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACVerifier;
-
 import play.libs.F;
 import play.libs.F.Promise;
 import play.mvc.Action.Simple;
 import play.mvc.*;
 import play.mvc.Http.*;
+
 // Custom packages
 import models.User;
-import static lib.Util.*;
+import static lib.util.Util.*;
 
 public class AuthenticateAction extends Simple {
 	public static final int INVALID_TOKEN = 1;
@@ -30,7 +29,10 @@ public class AuthenticateAction extends Simple {
 		
 		Http.Request request = ctx.request();
 		String[] temp = request.getHeader("Authorization").split(" ");
-		// TODO: protect from OutOfIndex
+		if (temp.length < 2) {
+			ret = buildSimpleErrorResult("Invalid token", EXPIRED_TOKEN);
+			return ret;
+		}
 		String token = temp[1];
 		if (token == null) {
 		  ret = buildSimpleErrorResult("Invalid token", INVALID_TOKEN);
