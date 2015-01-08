@@ -86,36 +86,31 @@ public class Article extends Model {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Article) {
-			if (this == obj)
-				return true; // same reference
-			Article article = (Article) obj;
+	public boolean equals(Object otherObject) {
+		if (this == otherObject) return true;
 
-			if (this.getGuid() == null) {
-				if (article.getGuid() == null) {
-					// compare link when both's guids null
-					if (this.getLink() == null) {
-						if (article.getLink() == null) {
-							// compare title when both's links are null
-							if (this.getTitle() == null) {
-								return false; // false even both's titles are null
-							} else {
-								return this.getTitle().equals(article.getTitle());
-							}
-						} else {
-							return false;
-						}
-					} else {
-						return this.getLink().equals(article.getLink());
-					}
+		if (otherObject == null) return false;
+
+		// if the class don't match , they can't be equal
+		if (this.getClass() != otherObject.getClass()) return false;
+		
+		Article other = (Article) otherObject;
+		if (this.getGuid() == null && other.getGuid() == null) {
+			// compare link when both's guid are null
+			if (this.getLink() == null && other.getLink() == null) {
+				// compare title when both's links are null
+				if (this.getTitle() == null && other.getTitle() == null) {
+					return false;
+				} else {
+					return Objects.equals(this.getTitle(), other.getTitle());
 				}
-				return false;
-			} else {
-				return this.getGuid().equals(article.getGuid());
 			}
+			else {
+				return Objects.equals(this.getLink(), other.getLink());
+			}
+		} else {
+			return Objects.equals(this.getGuid(), other.getGuid());
 		}
-		return false;
 	}
 
 	@Override

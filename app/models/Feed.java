@@ -6,12 +6,15 @@ import java.util.*;
 // 3rd Party's packages (including Play)
 import play.db.ebean.*;
 import play.data.validation.Constraints.*;
+
 import javax.persistence.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity
 public class Feed extends Model {
-	protected static Finder<Long, Feed> find = new Finder(Long.class, Feed.class);
+
+	protected static Finder<Long, Feed> find = new Finder<Long, Feed>(Long.class, Feed.class);
 	
 	@Id
   public Long id;
